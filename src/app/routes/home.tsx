@@ -1,10 +1,13 @@
-import Throwaway, { frontmatter } from "@/content/posts/__throwaway.mdx";
+import { getPosts } from "@/entities/post";
 
 export default function HomeRoute() {
   return (
     <main>
-      <h1>{frontmatter.title}</h1>
-      <Throwaway />
+      <ul>
+        {getPosts().map((post) => (
+          <li key={post.slug}>{post.title}</li>
+        ))}
+      </ul>
     </main>
   );
 }

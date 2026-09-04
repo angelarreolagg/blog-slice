@@ -1,6 +1,7 @@
 import { cp, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import type { Config } from "@react-router/dev/config";
+import { publishedSlugs } from "./config/posts.ts";
 
 // Framework mode emits <buildDirectory>/{client,server}; a static host wants the
 // client output at the root of `dist`.
@@ -25,7 +26,10 @@ export default {
   appDirectory: "src/app",
   buildDirectory: "dist",
   ssr: false,
-  prerender: ({ getStaticPaths }) => getStaticPaths(),
+  prerender: ({ getStaticPaths }) => [
+    ...getStaticPaths().filter((staticPath) => !staticPath.includes(":")),
+    ...publishedSlugs(process.cwd()).map((slug) => `/blog/${slug}`),
+  ],
   buildEnd: async ({ reactRouterConfig }) => {
     await flattenClientBuild(reactRouterConfig.buildDirectory);
   },

@@ -1,3 +1,4 @@
+export { getPost, getPosts } from "./model/registry";
 export type {
   Post,
   PostFrontmatter,
