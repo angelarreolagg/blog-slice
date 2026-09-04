@@ -256,6 +256,140 @@
   }
 }
 
+:root {
+  --acc-expand: var(--duration-fast);
+  --acc-collapse: var(--duration-fast);
+  --acc-chevron: var(--duration-fast);
+  --acc-ease: var(--ease-smooth-out);
+
+  --tt-in-dur: var(--duration-quick);
+  --tt-out-dur: 50ms;
+  --tt-scale: var(--scale-small);
+  --tt-delay: var(--duration-micro);
+  --tt-in-ease: var(--ease-out);
+  --tt-out-ease: var(--ease-out);
+  --tt-bg: var(--color-surface);
+  --tt-fg: var(--color-ink);
+
+  --avatar-lift: -4px;
+  --avatar-dur: 320ms;
+  --avatar-scale: 1.05;
+  --avatar-falloff: 0.45;
+  --avatar-ease-in: var(--ease-smooth-out);
+  --avatar-ease-out: var(--ease-bounce-strong);
+}
+
+/* grid-template-rows 0fr → 1fr gives a clean height animation
+   with no JS measurement; the inner element clips overflow. */
+.t-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open="true"] .t-acc-panel {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--acc-expand) var(--acc-ease);
+}
+.t-acc-panel-inner {
+  overflow: hidden;
+  opacity: 0;
+  filter: blur(2px);
+  transition:
+    opacity var(--acc-collapse) var(--acc-ease),
+    filter var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open="true"] .t-acc-panel-inner {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity var(--acc-expand) var(--acc-ease),
+    filter var(--acc-expand) var(--acc-ease);
+}
+.t-acc-chevron {
+  display: inline-flex;
+  transform: scaleY(1);
+  transform-origin: center;
+  transition: transform var(--acc-chevron) var(--acc-ease);
+}
+.t-acc-chevron path {
+  vector-effect: non-scaling-stroke;
+}
+.t-acc[data-open="true"] .t-acc-chevron {
+  transform: scaleY(-1);
+}
+
+/* Past the rail breakpoint the disclosure is always open and static. */
+@media (width >= 64rem) {
+  .t-acc-rail .t-acc-panel {
+    grid-template-rows: 1fr;
+    transition: none;
+  }
+  .t-acc-rail .t-acc-panel-inner {
+    opacity: 1;
+    filter: blur(0);
+    transition: none;
+  }
+}
+
+.t-tt-wrap {
+  position: relative;
+  display: inline-block;
+}
+.t-tt {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 0) scale(var(--tt-scale));
+  transform-origin: 50% 100%;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--tt-bg);
+  color: var(--tt-fg);
+  white-space: nowrap;
+  box-shadow: var(--shadow-border);
+  opacity: 0;
+  pointer-events: none;
+  /* Default rule controls the LEAVE state. transition-delay
+     stays unset so leaving plays without delay. */
+  transition:
+    opacity var(--tt-out-dur) var(--tt-out-ease),
+    transform var(--tt-out-dur) var(--tt-out-ease);
+}
+/* The delay belongs ONLY to the hover rule so leaving the trigger
+   snaps the delay back to 0 and the disappear plays immediately. */
+.t-tt-wrap:hover .t-tt,
+.t-tt-trigger:focus-visible + .t-tt {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+  transition-duration: var(--tt-in-dur);
+  transition-timing-function: var(--tt-in-ease);
+  transition-delay: var(--tt-delay);
+}
+
+/* Hover-spring transition only — the chip brings its own styling. */
+.t-avatar {
+  transform-origin: center;
+  /* translateY before scale so scale doesn't amplify the lift offset. */
+  transform: translateY(var(--shift, 0px)) scale(var(--scale-active, 1));
+  transition: transform var(--avatar-dur) var(--avatar-ease-in);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-acc-panel,
+  .t-acc-panel-inner,
+  .t-acc-chevron {
+    transition: none !important;
+  }
+  .t-tt {
+    transition: none !important;
+  }
+  .t-avatar {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
 @layer components {
   .prose {
     color: var(--color-ink);
@@ -311,6 +445,23 @@
   }
   .stagger-enter > :nth-child(4) {
     animation-delay: calc(var(--duration-micro) * 3);
+  }
+
+  /* Index rows arrive one after another; 40ms x 4 stays under the ~300ms cap. */
+  .row-stagger > * {
+    animation: var(--animate-stagger-enter);
+  }
+  .row-stagger > :nth-child(2) {
+    animation-delay: var(--duration-stagger);
+  }
+  .row-stagger > :nth-child(3) {
+    animation-delay: calc(var(--duration-stagger) * 2);
+  }
+  .row-stagger > :nth-child(4) {
+    animation-delay: calc(var(--duration-stagger) * 3);
+  }
+  .row-stagger > :nth-child(n + 5) {
+    animation-delay: calc(var(--duration-stagger) * 4);
   }
 
   /* Lines are inline-block so a highlight can bleed across the scroll width. */

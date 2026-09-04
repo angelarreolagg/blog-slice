@@ -23,8 +23,11 @@ export function PostCard({ post }: PostCardProps) {
         <p className="text-ink-muted text-meta mt-1 max-w-prose">
           {post.description}
         </p>
-        <p className="text-ink-faint text-meta mt-3 tabular-nums" lang="en">
-          <time dateTime={post.date}>{formatPostDate(post.date)}</time>
+        <p className="text-ink-faint text-meta mt-3 tabular-nums">
+          <time dateTime={post.date} lang="en">
+            {formatPostDate(post.date)}
+          </time>
+          {`, ${post.readingMinutes} min`}
           {post.tags.length > 0 && <span>{`, ${post.tags.join(", ")}`}</span>}
         </p>
       </Link>

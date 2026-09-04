@@ -14,7 +14,7 @@ export function PostListPage() {
         </p>
       </header>
 
-      <ul className="animate-article-enter -mx-4 [animation-delay:200ms] sm:-mx-5">
+      <ul className="row-stagger -mx-4 sm:-mx-5">
         {posts.map((post) => (
           <PostCard key={post.slug} post={post} />
         ))}

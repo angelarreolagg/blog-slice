@@ -1,9 +1,9 @@
 import { Check, Copy } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 import { cn } from "@/shared/lib/utils";
+import { useCopy } from "@/shared/lib/use-copy";
 import { useReducedMotion } from "@/shared/lib/use-reduced-motion";
 import { Button } from "@/shared/ui/button";
-import { useCopy } from "../lib/use-copy";
 
 const ICON_HIDDEN = { opacity: 0, scale: 0.25, filter: "blur(4px)" };
 const ICON_SHOWN = { opacity: 1, scale: 1, filter: "blur(0px)" };
