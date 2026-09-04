@@ -68,7 +68,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
       <h1 className="text-ink text-h1">
         {isNotFound ? "Page not found" : "Something went wrong"}
       </h1>
-      <p className="text-ink-muted text-lead mt-4 max-w-prose">
+      <p className="text-ink-muted text-lead mt-4 max-w-(--container-prose)">
         {isNotFound
           ? "The page you asked for does not exist."
           : "This page failed to render. Reloading may be enough; if not, the error is on our side."}

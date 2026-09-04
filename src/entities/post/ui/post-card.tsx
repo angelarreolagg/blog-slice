@@ -20,7 +20,7 @@ export function PostCard({ post }: PostCardProps) {
         <h3 id={titleId} className="text-ink text-h3">
           {post.title}
         </h3>
-        <p className="text-ink-muted text-meta mt-1 max-w-prose">
+        <p className="text-ink-muted text-meta mt-1 max-w-(--container-prose)">
           {post.description}
         </p>
         <p className="text-ink-faint text-meta mt-3 tabular-nums">

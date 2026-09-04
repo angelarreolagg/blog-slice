@@ -14,7 +14,7 @@ export function PostDetailPage() {
 
   return (
     // The rails live in the margins, so the prose column never moves.
-    <div className="relative mx-auto w-full max-w-prose">
+    <div className="relative mx-auto w-full max-w-(--container-prose)">
       <article className="w-full px-6 py-16 sm:px-8">
         <header className="stagger-enter mb-10">
           <p className="text-ink-faint text-meta tabular-nums">
@@ -29,7 +29,7 @@ export function PostDetailPage() {
           </p>
         </header>
 
-        <div className="mb-10 lg:mb-0">
+        <div className="mb-8 lg:mb-0">
           <TableOfContents headings={post.headings} label="Contenido" />
         </div>
 

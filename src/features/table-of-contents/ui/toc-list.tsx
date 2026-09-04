@@ -55,7 +55,9 @@ export function TocList({ headings, activeId }: TocListProps) {
                     : "text-ink-faint hover:text-ink",
                 )}
               >
-                {heading.text}
+                {/* The clamp needs a box with no padding, or a third line
+                    peeks through underneath it. */}
+                <span className="line-clamp-2">{heading.text}</span>
               </a>
             </li>
           );

@@ -23,7 +23,7 @@ export function TableOfContents({ headings, label }: TableOfContentsProps) {
       data-open={isOpen}
       className="t-acc t-acc-rail lg:absolute lg:inset-y-0 lg:right-full lg:mb-0 lg:w-40 xl:w-56"
     >
-      <div className="lg:sticky lg:top-24 lg:pr-6 xl:pr-10">
+      <div className="lg:sticky lg:top-24 lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-6 xl:pr-10">
         <button
           type="button"
           aria-expanded={isOpen}

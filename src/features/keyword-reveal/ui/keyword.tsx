@@ -1,5 +1,5 @@
-import { cn } from "cn";
 import { m } from "motion/react";
+import { cn } from "@/shared/lib/utils";
 import { usePointerCapability } from "@/shared/lib/use-pointer-capability";
 import { useReducedMotion } from "@/shared/lib/use-reduced-motion";
 import {
