@@ -35,7 +35,8 @@ Analogy: a well-printed book. Paper is paper, ink is ink, and the only pencil un
 - ALL-CAPS eyebrow labels above every heading.
 - Meta strings joined with middle dots (`Author · Date · 5 min`). Use spaces and a comma.
 - `→` appended to link and button text.
-- Shadows for elevation in dark mode. Use border and background lightness instead.
+- Layered depth shadows in dark mode. Elevation there is a single white ring (`--shadow-border`, section 3).
+- Nested surfaces sharing one radius. Outer radius = inner radius + padding.
 - Identical cards with the same radius for everything, regardless of hierarchy.
 - Decorative gradients.
 - Scroll-triggered animation on layout or content blocks. The one permitted scroll
@@ -132,6 +133,13 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
   --p-code-number: oklch(0.5 0.1 50);
 
   --p-shadow-panel: 0 8px 24px -8px oklch(0.22 0.006 260 / 0.16);
+  --p-shadow-border:
+    0 0 0 1px oklch(0 0 0 / 0.06), 0 1px 2px -1px oklch(0 0 0 / 0.06),
+    0 2px 4px 0 oklch(0 0 0 / 0.04);
+  --p-shadow-border-hover:
+    0 0 0 1px oklch(0 0 0 / 0.08), 0 1px 2px -1px oklch(0 0 0 / 0.08),
+    0 2px 4px 0 oklch(0 0 0 / 0.06);
+  --p-image-edge: oklch(0 0 0 / 0.1);
 }
 
 /* ---------- Palette: dark mode ---------- */
@@ -159,6 +167,9 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
     --p-code-number: oklch(0.82 0.065 60);
 
     --p-shadow-panel: 0 8px 24px -8px oklch(0 0 0 / 0.6);
+    --p-shadow-border: 0 0 0 1px oklch(1 0 0 / 0.08);
+    --p-shadow-border-hover: 0 0 0 1px oklch(1 0 0 / 0.13);
+    --p-image-edge: oklch(1 0 0 / 0.1);
   }
 }
 
@@ -190,6 +201,9 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
   --color-code-number: var(--p-code-number);
 
   --shadow-panel: var(--p-shadow-panel);
+  --shadow-border: var(--p-shadow-border);
+  --shadow-border-hover: var(--p-shadow-border-hover);
+  --color-image-edge: var(--p-image-edge);
 
   --font-sans:
     "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
@@ -267,15 +281,24 @@ not rewrite their internals. Alias their names onto this palette inside the same
 The tokens above are the canonical names. The aliases exist only to keep vendored code
 compiling; new code never uses them.
 
+### Elevation and edges
+
+**Shadows for elevation, borders for structure.** A container that has a border only
+to look raised uses `shadow-border` (three transparent layers in light mode, one white
+ring in dark mode) and `shadow-border-hover` on hover, transitioned over 150ms. Borders
+stay where they separate: dividers, table cells, the theme toggle's frame, focus rings.
+Images carry `outline-image-edge` (`1px`, inset) — pure black or white at 10%, never a
+tinted neutral, which reads as dirt on the edge.
+
 ### Color usage rules
 
-| Token       | Yes                                  | No                                           |
-| ----------- | ------------------------------------ | -------------------------------------------- |
-| `ink`       | Prose, headings, link text           | Meta, dates                                  |
-| `ink-muted` | Deck, card description, inactive nav | Prose body                                   |
-| `ink-faint` | Date, tag, image caption             | Any text that has to be read carefully       |
-| `accent`    | Keyword, focus ring                  | Links, buttons, headings, decorative borders |
-| `line`      | Hairlines, card border at rest       | Separating paragraphs                        |
+| Token       | Yes                                                  | No                                           |
+| ----------- | ---------------------------------------------------- | -------------------------------------------- |
+| `ink`       | Prose, headings, link text                           | Meta, dates                                  |
+| `ink-muted` | Deck, card description, inactive nav                 | Prose body                                   |
+| `ink-faint` | Date, tag, image caption                             | Any text that has to be read carefully       |
+| `accent`    | Keyword, focus ring, the active element of a diagram | Links, buttons, headings, decorative borders |
+| `line`      | Hairlines, card border at rest                       | Separating paragraphs                        |
 
 Check contrast with a real tool before moving any `L` value: OKLCH lightness is not WCAG relative luminance. Floor: **4.5:1** for text under 24px, **in both modes**.
 
@@ -384,7 +407,7 @@ Rules:
 
 ## 5. Primitives
 
-Eleven components. Variants are literal unions, never `enum`.
+Sixteen components. Variants are literal unions, never `enum`.
 
 Generated primitives are allowed as the starting point for anything with a real
 accessibility surface — focus management, dismissal, keyboard traversal. They are
@@ -421,6 +444,7 @@ Two variants, two sizes. There is no third.
 
 Sizes: `sm` → `h-8 px-3 text-meta`; `md` → `h-10 px-4 text-meta`. Radius `rounded-md`.
 Always `<button type="button">` with an explicit `cursor-pointer` (Tailwind v4 no longer applies it by default).
+Press: `scale(0.96)` over 150ms `ease-out` as a CSS transition, so a release mid-press returns smoothly. A `static` prop opts out where the motion would only distract.
 
 ### 5.3 PostCard
 
@@ -448,7 +472,10 @@ No caps, no `#`, no border. If it navigates, it inherits Link states.
 
 ### 5.5 CodeBlock (`<pre><code>`)
 
-`rounded-lg bg-surface border border-line p-4 overflow-x-auto font-mono text-[0.875rem] leading-[1.65]`
+The highlighter's `<figure>` is the surface: `rounded-lg bg-surface shadow-border overflow-hidden`. Inside it the `<pre>` is `p-4 overflow-x-auto font-mono text-[0.875rem] leading-[1.65]`.
+
+- A fenced ` ```json title="eas.json" ` renders a title bar: `border-b border-line font-mono text-caption text-ink-muted px-4 py-2`.
+- Highlighted lines (` ```ts {2,4-5} `) get `bg-surface-hover` and a 2px `line-strong` inset bar, bleeding across the scroll width. No accent.
 
 - `surface` background, one step off the page in both modes.
 - Highlighting uses the four `--color-code-*` tokens. Four colors, not twelve.
@@ -475,7 +502,7 @@ No oversized decorative quote marks. Not centered. Attribution goes in an inner 
 ```html
 <figure>
   <img
-    class="h-auto w-full rounded-md"
+    class="outline-image-edge h-auto w-full rounded-md outline -outline-offset-1"
     width="1600"
     height="900"
     loading="lazy"
@@ -500,6 +527,7 @@ No oversized decorative quote marks. Not centered. Attribution goes in an inner 
 - `text-meta text-ink-faint`, hover to `text-ink`.
 - Nav of 2–4 links. Current page marked with `aria-current="page"` and `text-ink`.
 - Footer: theme toggle + the 6 sprite logos, `size-4`, `text-ink-faint`, hover `text-ink`, each with an `aria-label`.
+- The theme toggle marks its choice with one `bg-surface-hover` indicator that slides between options (`translate`, 150ms `ease-out`) — only after a click, never on page load. The pressed option also turns `text-ink`, so the slide is never the only cue.
 
 ### 5.11 Keyword — the distinctive component
 
@@ -555,33 +583,67 @@ keyword a `<button>` with `aria-expanded`, `aria-controls`, and dismissal handli
 different component with a different contract. If it is ever wanted, it is added here
 first, as a separate primitive.
 
+### 5.12 Callout
+
+An aside that interrupts the prose on purpose. `role="note"`, `shadow-border rounded-lg bg-surface p-4`, a Lucide icon at `strokeWidth={1.5}` beside the text. Two tones, distinguished by icon and accessible name, never by colour: `note` (`Info`) and `warning` (`TriangleAlert`).
+
+```ts
+export type CalloutTone = "note" | "warning";
+```
+
+### 5.13 Compare (tabs)
+
+Base UI Tabs, vendored and restyled: `tablist` / `tab` / `tabpanel`, arrow keys, uncontrolled `defaultValue` so prerender and hydration agree. Tabs are `text-meta`, `text-ink-muted`, the active one `text-ink` with a `border-b border-ink` — that border is the static cue. A hairline indicator slides under the active tab (`translate` + `width`, 200ms `ease-out`); it is hidden until measured and is never the only cue. Authored as `<Compare label defaultItem>` with `<CompareItem id label>` children.
+
+### 5.14 Flow
+
+A linear diagram: `<ol aria-label>` of nodes with one arrow between each pair. Horizontal from `sm`, vertical below it (one `ArrowRight` icon, `rotate-90 sm:rotate-0`). Nodes are `shadow-border rounded-md px-3 py-2 text-meta text-center`. `activeId` gives one node `ring-1 ring-accent text-ink` and `aria-current="step"`. Purely presentational.
+
+### 5.15 Layers
+
+Stacked bands, one per item, in a `role="group" aria-label`. Each band is a real `<button type="button" aria-pressed>` toggle at least `min-h-11` tall; hover highlights on fine pointers, a tap sets state on touch. The active band is `ring-1 ring-accent bg-surface text-ink`; bands the active one `reaches` get `bg-surface`; the rest drop to `opacity-60` and must still clear 4.5:1. Every state change is a CSS transition ≤150ms.
+
+### 5.16 Steps
+
+A walkthrough that owns an index: a `Flow` with the active node, a `Paso n de N` counter in `tabular-nums`, and previous/next `ghost sm` buttons with `aria-label`s, disabled at the ends. The description lives in a stable `aria-live="polite"` wrapper of fixed minimum height; the text inside enters with `opacity + translateY 12px + blur 4px` over 200ms and exits with `translateY -12px` over 150ms. The first step is what the prerendered HTML shows.
+
+The kit is declared from `.mdx` with data; a post never ships its own components. Its control copy (`Paso 2 de 4`, `Paso siguiente`) is in the prose language, because it reads as part of the article.
+
 ---
 
 ## 6. Motion
 
+The installed skill `.agents/skills/make-interfaces-feel-better/` (animations.md,
+surfaces.md, icons.md) is the authority on how things move and feel; this section is
+its application to the blog.
+
 Hard rules:
 
-1. **Only `opacity` and `transform`.** Animating `width`, `height`, `box-shadow`, `background-size`, `top/left`, `margin` is forbidden.
-2. An element animated by Motion does **not** carry a Tailwind `transition-*` on the same property.
-3. `prefers-reduced-motion: reduce` is mandatory, and the reduced state shows **the final content**.
+1. **Motion animates `opacity`, `transform` and, for icon swaps and step panels only, `filter`.** `width`, `height`, `box-shadow`, `background-size`, `top/left` and `margin` are never animated by anything.
+2. **Interactive state uses CSS transitions**, which retarget mid-flight; **keyframes are for one-shot sequences** (page entrances). Never `transition-all` — name the properties.
+3. An element animated by Motion does **not** carry a Tailwind `transition-*` on the same property.
+4. **Motion is never the only feedback channel.** Every animated state also has a static cue: colour, icon, label or attribute.
+5. `prefers-reduced-motion: reduce` is mandatory, and the reduced state shows **the final content** with no delayed chunks.
+6. **No custom animation on high-frequency interactions.** Row hovers and keystrokes get instant feedback or a ≤150ms `opacity` / `background-color` transition.
 
-**Rule 1 applies to Motion, not to CSS hover states.** Transitioning `color`,
-`background-color`, `border-color`, and `text-decoration-color` in CSS is allowed: they
-repaint, they never trigger layout, and a CSS transition is interruptible by default.
-Anything that **moves** uses `transform` exclusively, and any property Motion drives
-carries no CSS transition of its own — that is rule 2.
+**Durations:** hover 100–150ms · press 150ms · icon swap 300ms · step panel 200ms in, 150ms out · page-header entrance 400ms with chunks 100ms apart. Nothing else exceeds 300ms.
 
-**Durations:** hover/press 120ms · panel 200ms · page transition 240ms. Nothing above 300ms.
+| Moment                  | Property                                                           | Duration               | Easing                                                  |
+| ----------------------- | ------------------------------------------------------------------ | ---------------------- | ------------------------------------------------------- |
+| Link hover              | `text-decoration-color`                                            | 120ms                  | `--ease-soft`                                           |
+| Post row hover          | `background-color`                                                 | 100ms                  | `ease-out`                                              |
+| Surface hover           | `box-shadow` (`shadow-border-hover`)                               | 150ms                  | `ease-out`                                              |
+| Button press            | `scale(0.96)`, CSS transition                                      | 150ms                  | `ease-out`                                              |
+| Contextual icon         | `scale .25→1`, `opacity 0→1`, `blur 4→0`                           | spring 300ms, bounce 0 | Motion; CSS `cubic-bezier(0.2, 0, 0, 1)` when no Motion |
+| Theme indicator         | `translate`, after a click only                                    | 150ms                  | `ease-out`                                              |
+| Page-header entrance    | `opacity`, `translateY 12→0`, `blur 4→0`, once, chunks 100ms apart | 400ms                  | `--ease-out-quart`                                      |
+| Body entrance           | `opacity` 0→1, once, 200ms after the header                        | 240ms                  | `--ease-out-quart`                                      |
+| Step panel              | in: `opacity`, `y 12→0`, `blur`; out: `y → -12`, `blur`            | 200ms / 150ms          | `--ease-out-quart` / `ease-out`                         |
+| Diagram highlight       | `box-shadow`, `background-color`, `color`, `opacity`               | 150ms                  | `ease-out`                                              |
+| Keyword reveal (hover)  | `scaleX` + `opacity`                                               | 180ms                  | `--ease-out-quart`                                      |
+| Keyword stagger (touch) | `scaleX` + `opacity`                                               | 180ms, 120ms apart     | `--ease-out-quart`                                      |
 
-| Moment                  | Property                 | Duration           | Easing             |
-| ----------------------- | ------------------------ | ------------------ | ------------------ |
-| Link hover              | `text-decoration-color`  | 120ms              | `--ease-soft`      |
-| Post row hover          | `background-color`       | 120ms              | `--ease-soft`      |
-| Button press            | `transform: scale(0.98)` | 100ms              | `--ease-soft`      |
-| Keyword panel           | `opacity` + `translateY` | 200ms              | `--ease-out-quart` |
-| Article entrance        | `opacity` 0→1, once      | 240ms              | `--ease-out-quart` |
-| Keyword reveal (hover)  | `scaleX` + `opacity`     | 180ms              | `--ease-out-quart` |
-| Keyword stagger (touch) | `scaleX` + `opacity`     | 180ms, 120ms apart | `--ease-out-quart` |
+Page entrances are CSS keyframes on the prerendered markup so the prose is visible before, and without, JavaScript. Split the header into its semantic chunks (date, title, deck, tags) and stagger them; the body is one chunk. Nothing scroll-triggers except the keyword stagger.
 
 **Theme switching is not animated.** A full-page crossfade is expensive and produces an intermediate gray flash.
 
@@ -593,11 +655,12 @@ carries no CSS transition of its own — that is rule 2.
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
   }
 }
 ```
 
-In Motion, also read the preference and pass `transition={{ duration: 0 }}` — the media query does not stop a JS-driven animation.
+The zeroed delay matters: a staggered chunk with `animation-fill-mode: both` stays invisible for its delay even at zero duration. In Motion, also read the preference and pass `transition={{ duration: 0 }}` — the media query does not stop a JS-driven animation.
 
 ---
 
@@ -609,7 +672,7 @@ In Motion, also read the preference and pass `transition={{ duration: 0 }}` — 
 - Skip link as the first element in `<body>`, visible on focus only.
 - `<html lang="…">` set to the post's actual language.
 - `color-scheme` declared in both modes so scrollbars and native controls match.
-- Minimum touch target 44×44 px on mobile, keywords included.
+- Minimum hit area 44×44 px on touch and 40×40 px in dense desktop UI, extended with a pseudo-element when the visible control is smaller; two hit areas never overlap. Keywords are not controls and get none.
 - The theme toggle respects `prefers-color-scheme` by default and persists an explicit choice in `localStorage`. An inline script in `<head>` applies `data-theme` before first paint to avoid the wrong-theme flash.
 
 ---
@@ -697,7 +760,9 @@ does not land. The rest does not count.
 - [ ] Looks right in **light and dark**, and contrast clears 4.5:1 in both.
 - [ ] `bg-linear-to-*`, not `bg-gradient-to-*`.
 - [ ] Variants are literal unions, no `enum`.
-- [ ] Motion animates only `opacity` or `transform`.
+- [ ] Motion animates only `opacity`, `transform` and — for icon swaps and step panels — `filter`.
+- [ ] Interactive states are CSS transitions with named properties; keyframes only run once.
+- [ ] Press scale is exactly `0.96`; nested radii are concentric; raised surfaces use `shadow-border`, not a border.
 - [ ] No Motion element carries a Tailwind `transition-*` on the same property.
 - [ ] `prefers-reduced-motion` respected, and the reduced state shows full content.
 - [ ] Visible keyboard focus on every new interactive element.

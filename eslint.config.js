@@ -9,10 +9,11 @@ import { defineConfig, globalIgnores } from "eslint/config";
 
 const LAYERS = ["app", "pages", "widgets", "features", "entities", "shared"];
 
-// A layer may import only from layers below it. `app` is the composition root:
-// its framework files, styles and providers legitimately reference each other.
+// A layer may import only from layers below it. `app` is the composition root
+// and `shared` is segmented rather than sliced, so both may reference themselves.
 const layerPolicies = LAYERS.map((layer, index) => {
-  const reachable = LAYERS.slice(layer === "app" ? index : index + 1);
+  const isSelfReferencing = layer === "app" || layer === "shared";
+  const reachable = LAYERS.slice(isSelfReferencing ? index : index + 1);
 
   return {
     from: [{ element: { type: layer } }],

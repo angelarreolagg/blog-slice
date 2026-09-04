@@ -11,7 +11,7 @@ export function ProseImage({ alt, ...props }: ProseImageProps) {
       alt={alt}
       loading="lazy"
       decoding="async"
-      className="border-line h-auto w-full rounded-md border"
+      className="outline-image-edge h-auto w-full rounded-md outline -outline-offset-1"
       {...props}
     />
   );

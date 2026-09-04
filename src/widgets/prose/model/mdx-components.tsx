@@ -1,6 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import { AnimatedParagraph, Keyword } from "@/features/keyword-reveal";
 import { CodeBlock } from "../ui/code-block";
+import { CodeTitle } from "@/shared/ui/prose/code-title";
 import { Heading } from "@/shared/ui/prose/heading";
 import { InlineCode } from "@/shared/ui/prose/inline-code";
 import { ProseBlockquote } from "@/shared/ui/prose/prose-blockquote";
@@ -32,6 +33,7 @@ export const mdxComponents: MDXComponents = {
   code: InlineCode,
   pre: CodeBlock,
   figure: ProseFigureWrapper,
+  figcaption: CodeTitle,
   img: ProseImage,
   hr: ProseDivider,
   table: ProseTable,

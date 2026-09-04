@@ -330,6 +330,35 @@ Accessibility and SEO.
 
 ---
 
+## Phase 9 — Interaction Kit and Polish
+
+The polish skill in `.agents/skills/make-interfaces-feel-better/` governs how things
+move and feel from here on; the style document's §6 is its application. Each post
+feels unique by composing a shared, data-driven kit from `.mdx` — no per-post code.
+
+- [x] Adopt the skill's values in the shell: `antialiased` root, press `scale(0.96)`
+      with a `static` opt-out, icon swap on the copy button, a sliding theme indicator
+      that never animates on load, named transition properties everywhere
+- [x] Add `shadow-border` / `shadow-border-hover` and `image-edge` tokens; raised
+      surfaces drop their borders, images gain the inset outline
+- [x] Staged page-header entrance (CSS keyframes, 100ms chunks) on the index and the
+      post; the body follows as one chunk; reduced motion zeroes delays too
+- [x] Style the highlighter output the pipeline already emits: `title="…"` bars and
+      highlighted lines
+- [ ] Kit: `Callout`, `Compare` (Base UI Tabs), `Flow`, `Layers`, `Steps`, registered
+      in the MDX map with contract tests; the accent marks a diagram's active element
+- [ ] Write "React Native y Expo: el entorno de EAS y cómo funcionan las
+      actualizaciones OTA" for complete newcomers, exercising every kit element
+- [ ] Retrofit the three existing posts with at least one kit element each and delete
+      the `<img>`-loaded diagram they no longer need
+- [ ] Browser pass: every state at 10% speed, both themes, 320/390/1280, keyboard
+      through `Layers` → `Compare` → `Steps`, reduced motion, no hydration errors
+
+**Done when:** every post uses the kit, the shell follows the skill's numbers, and
+the review checklist in the style document passes on all four posts.
+
+---
+
 ## 5. Explicitly Out of Scope for v1
 
 Recorded as decisions, not oversights:

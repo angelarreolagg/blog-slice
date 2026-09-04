@@ -11,6 +11,8 @@
   are written in English.** No exceptions.
 - The only Spanish in the repository is authored prose inside `src/content/posts/*.mdx`
   and the `lang` attribute that serves it.
+- One exception: control copy that renders _inside_ the prose (the kit's `Paso 2 de 4`,
+  `Paso siguiente`) follows the prose language, because a reader meets it mid-article.
 
 ## 2. Architecture: Feature-Sliced Design
 
@@ -81,7 +83,9 @@ import { PostCard } from "@/entities/post/ui/post-card"; // forbidden
 ```
 
 The `shared` layer is exempt: import directly from its segments
-(`@/shared/lib/utils`, `@/shared/ui/button`).
+(`@/shared/lib/utils`, `@/shared/ui/button`). Its segments are not slices, so
+`shared` may also import from itself — `shared/ui` reaches `cn` and the media hooks
+in `shared/lib`.
 
 ### Reconciling FSD with React Router framework mode
 

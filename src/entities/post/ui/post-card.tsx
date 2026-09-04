@@ -11,7 +11,7 @@ export function PostCard({ post }: PostCardProps) {
   const titleId = useId();
 
   return (
-    <li className="border-line hover:bg-surface has-focus-visible:bg-surface ease-soft border-b transition-colors duration-120 hover:rounded-lg hover:border-transparent has-focus-visible:rounded-lg has-focus-visible:border-transparent">
+    <li className="border-line hover:bg-surface has-focus-visible:bg-surface border-b transition-[background-color,border-color] duration-100 ease-out hover:rounded-lg hover:border-transparent has-focus-visible:rounded-lg has-focus-visible:border-transparent">
       <Link
         to={`/blog/${post.slug}`}
         aria-labelledby={titleId}

@@ -74,4 +74,4 @@ These cost time when rediscovered:
 
 ## Skills
 
-`make-interfaces-feel-better` (`/make-interfaces-feel-better`) is installed in `.agents/skills/`, symlinked from `.claude/skills/`, pinned by `skills-lock.json`. Consult it for UI polish work.
+`make-interfaces-feel-better` (`/make-interfaces-feel-better`) is installed in `.agents/skills/`, symlinked from `.claude/skills/`, pinned by `skills-lock.json`. It governs how things move and feel — press scale, enter/exit values, icon swaps, shadows, hit areas — and `STYLEGUIDE.md` §6 is its application here. Read it before touching any motion or surface.

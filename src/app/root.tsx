@@ -21,7 +21,7 @@ const THEME_SCRIPT = `try{var t=localStorage.getItem(${JSON.stringify(
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={SITE.language}>
+    <html lang={SITE.language} className="antialiased">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

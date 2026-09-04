@@ -12,9 +12,9 @@ export function PostDetailPage() {
   const { Content } = post;
 
   return (
-    // A CSS entrance keeps the prose visible when the interaction layer never loads.
-    <article className="animate-article-enter mx-auto w-full max-w-prose px-6 py-16 sm:px-8">
-      <header className="mb-12">
+    // CSS entrances keep the prose visible when the interaction layer never loads.
+    <article className="mx-auto w-full max-w-prose px-6 py-16 sm:px-8">
+      <header className="stagger-enter mb-12">
         <p className="text-ink-faint text-meta tabular-nums" lang="en">
           <time dateTime={post.date}>{formatPostDate(post.date)}</time>
           {post.updated && `, updated ${formatPostDate(post.updated)}`}
@@ -34,7 +34,7 @@ export function PostDetailPage() {
         )}
       </header>
 
-      <div className="prose">
+      <div className="prose animate-article-enter [animation-delay:200ms]">
         <Content />
       </div>
     </article>

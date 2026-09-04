@@ -27,7 +27,7 @@ export function CodeBlock({ children, ...props }: CodeBlockProps) {
         role="region"
         aria-label={`${language} code block`}
         lang="en"
-        className="border-line bg-surface text-ink overflow-x-auto rounded-lg border p-4 font-mono text-[0.875rem] leading-[1.65]"
+        className="text-ink overflow-x-auto p-4 font-mono text-[0.875rem] leading-[1.65]"
       >
         {children}
       </pre>
