@@ -1,3 +1,5 @@
+import { NotFoundPage } from "@/pages/not-found";
+
 export default function NotFoundRoute() {
-  return <h1>404</h1>;
+  return <NotFoundPage />;
 }

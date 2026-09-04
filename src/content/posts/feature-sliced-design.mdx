@@ -1,0 +1,102 @@
+---
+title: "Feature-Sliced Design como arquitectura de front-end"
+description: "Una jerarquía de capas que se puede verificar con el linter, y qué pasa cuando el framework exige archivos en sitios concretos."
+date: 2026-01-21
+tags: ["arquitectura", "fsd"]
+draft: false
+---
+
+Casi todas las convenciones de carpetas del front-end son acuerdos verbales.
+Funcionan durante tres meses y se disuelven en cuanto entra alguien que no estuvo
+en la conversación. Lo interesante de
+
+<Keyword tone="define">Feature-Sliced Design</Keyword> no es la lista de
+carpetas: es que la regla que las ordena se puede comprobar automáticamente.
+
+## Las capas
+
+Seis capas, ordenadas. Un módulo importa únicamente de capas estrictamente
+inferiores a la suya.
+
+1. `app` — enrutado, proveedores, estilos globales.
+2. `pages` — una pantalla cada una.
+3. `widgets` — bloques compuestos reutilizables.
+4. `features` — una interacción con estado propio.
+5. `entities` — modelos de dominio y sus componentes.
+6. `shared` — primitivas, utilidades, configuración.
+
+La consecuencia práctica aparece al leer un import: la dirección de la flecha ya
+dice si el cambio es local o si va a arrastrar media aplicación.
+
+## Rebanadas y segmentos
+
+Dentro de una capa, una _rebanada_ es una carpeta de dominio, y dentro de ella
+los segmentos son siempre los mismos cuatro.
+
+| Segmento | Contiene              |
+| -------- | --------------------- |
+| `ui/`    | componentes de React  |
+| `model/` | tipos, estado, lógica |
+| `lib/`   | ayudantes locales     |
+| `api/`   | acceso a datos        |
+
+Cada rebanada expone una <Keyword tone="note">API pública</Keyword> a través de
+su propio `index.ts`. Importar desde fuera llega solo a ese archivo:
+
+```ts
+import { PostCard } from "@/entities/post"; // correcto
+import { PostCard } from "@/entities/post/ui/post-card"; // prohibido
+```
+
+La segunda forma parece inofensiva hasta el día en que hay que mover el archivo.
+
+## La parte que sí se verifica
+
+Sin comprobación automática, todo lo anterior es un documento que nadie lee. La
+regla se codifica una vez y el linter la aplica en cada commit:
+
+```js
+const layerPolicies = LAYERS.map((layer, index) => ({
+  from: [{ element: { type: layer } }],
+  allow: LAYERS.slice(index + 1).map((allowed) => ({
+    to: { element: { type: allowed } },
+  })),
+}));
+```
+
+A partir de ahí, un import hacia arriba no es una discusión de revisión: es un
+build roto.
+
+> Una convención que no falla el build es una preferencia. Una que sí falla es
+> una arquitectura.
+
+## Dónde se rompe la teoría
+
+Los frameworks tienen opiniones sobre dónde viven ciertos archivos. React Router
+en modo framework exige `root.tsx` y `routes.ts` en un directorio concreto, y eso
+choca con la idea de que cada archivo pertenece a una rebanada.
+
+La salida no es pelearse con el framework, sino apuntarlo a la capa correcta:
+configurando `appDirectory` a `src/app`, los archivos obligatorios caen dentro de
+la capa donde el enrutado ya debía vivir. Los módulos de ruta se quedan finos y
+delegan el render a una página:
+
+```tsx
+export { meta } from "@/pages/post-detail";
+export { default } from "@/pages/post-detail";
+```
+
+### El caso de los datos
+
+Hay una excepción más, y conviene declararla en voz alta en lugar de dejarla
+implícita: la prosa en `.mdx` es <Keyword tone="reference">dato, no código</Keyword>.
+No es una capa, no importa de ninguna, y la lee la entidad que la modela.
+
+## Lo que cuesta
+
+- Más archivos por funcionalidad, sobre todo al principio.
+- Un `index.ts` por rebanada que hay que mantener.
+- Discusiones reales sobre si algo es `feature` o `widget`.
+
+Ninguno de los tres es gratis. A cambio, la pregunta "¿dónde va esto?" tiene una
+respuesta que no depende de quién esté de guardia esa semana.

@@ -1,0 +1,116 @@
+---
+title: "SOLID aplicado a componentes de React"
+description: "Qué sobrevive de los cinco principios cuando la unidad de diseño deja de ser la clase y pasa a ser la función."
+date: 2026-03-12
+tags: ["arquitectura", "react"]
+draft: false
+---
+
+Los cinco principios de SOLID se escribieron pensando en clases, herencia e
+interfaces. React no tiene ninguna de las tres. Aun así, cuatro de los cinco
+siguen siendo útiles si aceptamos que la unidad de diseño es la
+
+<Keyword tone="define">función pura</Keyword> respecto de sus props, y que la
+composición ocupa el lugar que la herencia tenía en 2003.
+
+## Responsabilidad única
+
+El principio más citado es también el peor entendido. "Una sola razón para
+cambiar" no significa _un componente por archivo_: significa que las razones por
+las que ese archivo se modifica deberían venir siempre del mismo sitio.
+
+Un componente que decide qué datos pedir, cómo ordenarlos y cómo pintarlos tiene
+tres razones para cambiar. Cuando el diseño se mueve, se toca. Cuando cambia el
+endpoint, se toca. Cuando el orden pasa a ser configurable, se toca otra vez.
+
+> El síntoma no es el tamaño del archivo. Es cuántas conversaciones distintas
+> terminan en el mismo commit.
+
+La separación que funciona en la práctica es la que sigue la
+
+<Keyword tone="reference">flujo de datos</Keyword>: los datos bajan, los eventos
+suben, y el componente que pinta no sabe de dónde salió lo que pinta.
+
+### Cómo se ve el corte
+
+```tsx
+function PostList({ posts, onSelect }: PostListProps) {
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.slug}>
+          <button type="button" onClick={() => onSelect(post.slug)}>
+            {post.title}
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+`PostList` no sabe pedir datos ni qué significa seleccionar. Esa ignorancia es
+la propiedad que queremos: es lo que permite montarlo en una prueba sin red, sin
+router y sin store.
+
+## Abierto/cerrado, o el argumento a favor de `children`
+
+Extender sin modificar, en React, se llama <Keyword tone="note">composición</Keyword>.
+Cada vez que añadimos una prop booleana para cubrir un caso nuevo estamos
+modificando el componente en lugar de extenderlo.
+
+1. `isCompact` aparece porque hay una vista densa.
+2. `hideDescription` aparece porque una pantalla no la quiere.
+3. `variant="inline"` aparece porque ninguna de las dos encajaba.
+
+Tres props después el componente tiene ocho combinaciones posibles y solo cuatro
+tienen sentido. La alternativa es aceptar `children` y dejar que quien lo usa
+decida qué va dentro.
+
+| Señal                               | Configuración | Composición |
+| ----------------------------------- | ------------- | ----------- |
+| Casos conocidos y cerrados          | Sí            | No          |
+| Casos que aparecen cada dos sprints | No            | Sí          |
+| El componente ya tiene 4 booleanos  | No            | Sí          |
+
+## Sustitución de Liskov sin herencia
+
+Sin clases el principio se traduce a algo más simple: **si un componente acepta
+las props de un elemento nativo, debe comportarse como ese elemento nativo**. Un
+`Button` que se traga `type` y siempre envía el formulario ha roto el contrato,
+aunque compile.
+
+- Reenvía `ref` si el original lo acepta.
+- No descartes `onClick` silenciosamente.
+- No conviertas un `<button>` en un `<div>` con `onClick`.
+
+## Segregación de interfaces
+
+Una prop que solo se usa en la mitad de los casos es una interfaz demasiado
+ancha. En TypeScript esto se modela con uniones discriminadas, no con campos
+opcionales que se contradicen entre sí.
+
+```ts
+type Result =
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | { status: "ready"; posts: Array<PostSummary> };
+```
+
+El compilador deja de permitir el estado imposible: `status: "loading"` con
+`message` presente ya no existe.
+
+## Inversión de dependencias
+
+El último es el que más se nota en una base de código grande. Un componente no
+debería importar el módulo concreto que hace la petición; debería recibir la
+función que la hace. Eso es literalmente lo que hace un
+
+<Keyword tone="define">hook inyectado</Keyword> en una prueba.
+
+---
+
+De los cinco, el que peor envejece es el de sustitución: sin jerarquías, casi
+siempre se reduce a "no mientas sobre las props que aceptas". Los otros cuatro
+describen bastante bien la diferencia entre una base de código que se deja tocar
+y otra que no.

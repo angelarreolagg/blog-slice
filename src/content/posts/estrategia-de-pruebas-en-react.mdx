@@ -1,0 +1,105 @@
+---
+title: "Una estrategia de pruebas que sobrevive al refactor"
+description: "Qué merece una aserción, qué se prueba solo con mirar la pantalla y por qué las pruebas de estilos siempre acaban borrándose."
+date: 2026-02-04
+updated: 2026-02-18
+tags: ["pruebas", "react"]
+draft: false
+---
+
+La mayoría de las suites de pruebas de front-end no fallan porque falte
+cobertura. Fallan porque prueban <Keyword tone="note">implementación</Keyword>: el nombre de un estado interno, el orden de dos
+llamadas, una clase de utilidad. Todo eso cambia en el primer refactor y ninguna
+de esas aserciones dice nada sobre si la interfaz funciona.
+
+## La pregunta que ordena todo
+
+Antes de escribir una aserción, conviene responder una cosa: _¿un usuario podría
+notar que esto se rompió?_ Si la respuesta es no, la prueba no está protegiendo
+nada.
+
+> Una prueba que se rompe al renombrar una función interna no es una red de
+> seguridad. Es una segunda copia del código, escrita peor.
+
+Eso deja tres categorías que sí merecen el esfuerzo.
+
+### 1. Lógica pura
+
+Ordenar, filtrar, formatear. Son funciones sin DOM y sin tiempo, y por eso son
+las pruebas más baratas de toda la suite.
+
+```ts
+it("orders posts newest first", () => {
+  const ordered = sortByDate([older, newer]);
+
+  expect(ordered.map((post) => post.slug)).toEqual(["newer", "older"]);
+});
+```
+
+### 2. Comportamiento observable
+
+Lo que el usuario puede hacer y ver. La regla práctica es consultar por
+
+<Keyword tone="define">rol accesible</Keyword> antes que por texto, y por texto
+antes que por un `data-testid`.
+
+```tsx
+it("reports success after copying", async () => {
+  const user = userEvent.setup();
+  render(<CopyButton value="pnpm build" />);
+
+  await user.click(screen.getByRole("button", { name: "Copy code" }));
+
+  expect(screen.getByRole("button", { name: "Copied" })).toBeInTheDocument();
+});
+```
+
+Si una consulta por rol no encuentra el elemento, casi siempre el problema está
+en el componente y no en la prueba.
+
+### 3. Contratos de accesibilidad
+
+Son los que más valor tienen por línea escrita, porque son invisibles en una
+revisión visual: un `aria-pressed` que no refleja el estado, un foco que se
+pierde al cerrar un diálogo, un adorno que se anuncia como si fuera un control.
+
+## Lo que no se prueba
+
+- **Clases de Tailwind.** `toHaveClass("bg-surface")` se rompe en cada refactor y
+  no dice nada sobre cómo se ve.
+- **Estilos calculados.** La hoja de estilos no se procesa bajo `jsdom`, a
+  propósito.
+- **Snapshots de marcado.** Se aprueban sin leerlos y dejan de significar algo en
+  la tercera semana.
+- **Fotogramas de animación.** El easing se revisa con los ojos.
+
+## Sobre los dobles
+
+Un doble de prueba es una afirmación sobre un límite del sistema. Cuando aparece
+en medio de la lógica propia, normalmente señala que ese límite está mal puesto
+y que la <Keyword tone="reference">inversión de control</Keyword> se quedó a
+medias.
+
+| Qué se dobla         | ¿Merece la pena? | Por qué                                   |
+| -------------------- | ---------------- | ----------------------------------------- |
+| Red y almacenamiento | Sí               | Es un límite real del sistema             |
+| `matchMedia`         | Sí               | El entorno headless no lo implementa      |
+| Un componente propio | Casi nunca       | Suele esconder un acoplamiento evitable   |
+| El reloj             | A veces          | Solo si el comportamiento depende del día |
+
+## Una nota sobre la cobertura
+
+No hay un número objetivo. Un 90 % alcanzado a base de renderizar componentes sin
+afirmar nada es peor que un 60 % concentrado en las tres categorías de arriba,
+porque el primero da confianza sin darla.
+
+<Figure
+  src="/hero.png"
+  alt="Diagrama de las tres categorías de prueba apiladas sobre una base de lógica pura"
+  width={343}
+  height={361}
+  caption="Las tres categorías, de la más barata a la más cara de escribir."
+/>
+
+Al final la pregunta sigue siendo la misma: si borro esta prueba, ¿me entero de
+que algo se rompió antes de que se entere alguien más?

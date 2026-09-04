@@ -1,13 +1,5 @@
-import { getPosts } from "@/entities/post";
+import { PostListPage } from "@/pages/post-list";
 
 export default function HomeRoute() {
-  return (
-    <main>
-      <ul>
-        {getPosts().map((post) => (
-          <li key={post.slug}>{post.title}</li>
-        ))}
-      </ul>
-    </main>
-  );
+  return <PostListPage />;
 }
