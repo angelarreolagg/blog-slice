@@ -1,20 +1,24 @@
 import "@testing-library/jest-dom/vitest";
 import { afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
+import { mockMatchMedia } from "./match-media";
 
-// jsdom does not implement matchMedia; hooks read it during first render.
+// jsdom implements neither of these; motion reads both while mounting.
+mockMatchMedia();
+
 vi.stubGlobal(
-  "matchMedia",
-  vi.fn((query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
+  "IntersectionObserver",
+  class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords() {
+      return [];
+    }
+  },
 );
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  mockMatchMedia();
+});
