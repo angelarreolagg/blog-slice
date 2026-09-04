@@ -60,8 +60,9 @@ export default defineConfig([
     },
   },
   {
-    // Generated primitives export variant helpers alongside their component.
-    files: ["src/**/ui/**/*.tsx"],
+    // Generated primitives export variant helpers alongside their component,
+    // and route modules must export the framework contract beside `default`.
+    files: ["src/**/ui/**/*.tsx", "src/app/routes/**/*.tsx", "src/app/root.tsx"],
     rules: { "react-refresh/only-export-components": 0 },
   },
   {

@@ -1,7 +1,8 @@
 import { cp, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import type { Config } from "@react-router/dev/config";
-import { publishedSlugs } from "./config/posts.ts";
+import { writeRss, writeSitemap } from "./config/feeds.ts";
+import { publishedPosts, publishedSlugs } from "./config/posts.ts";
 
 // Framework mode emits <buildDirectory>/{client,server}; a static host wants the
 // client output at the root of `dist`.
@@ -31,6 +32,12 @@ export default {
     ...publishedSlugs(process.cwd()).map((slug) => `/blog/${slug}`),
   ],
   buildEnd: async ({ reactRouterConfig }) => {
-    await flattenClientBuild(reactRouterConfig.buildDirectory);
+    const { buildDirectory } = reactRouterConfig;
+
+    await flattenClientBuild(buildDirectory);
+
+    const posts = publishedPosts(process.cwd());
+    await writeSitemap(buildDirectory, posts);
+    await writeRss(buildDirectory, posts);
   },
 } satisfies Config;
