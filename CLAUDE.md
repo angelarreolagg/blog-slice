@@ -42,7 +42,9 @@ Git hooks are active: `pre-commit` runs lint-staged, `commit-msg` runs commitlin
 
 `reactRouter()` replaces `@vitejs/plugin-react` in `vite.config.ts` — running both double-transforms JSX and breaks Fast Refresh. `@vitejs/plugin-react` stays installed because `vitest.config.ts` uses it; tests do not run the framework plugin.
 
-**Content model.** Frontmatter is the single source of truth (`title`, `description`, `date`, optional `updated`, `tags`, `draft`). The slug is always the filename, so the URL and the file can never disagree. `import.meta.glob` builds the index; `react-router.config.ts` reads the same directory with `gray-matter` to enumerate prerender paths, which is how drafts are excluded from the build output.
+**Content model.** Frontmatter is the single source of truth (`title`, `description`, `date`, optional `updated`, `tags`, `draft`). The slug is always the filename, so the URL and the file can never disagree. `config/posts.ts` reads the directory with `gray-matter` and is the one source for both the prerender paths and the `virtual:published-posts` module the registry imports, which is how a draft stays out of the build output entirely.
+
+**Build-time code lives in `config/`.** `vite.config.ts` and `react-router.config.ts` stay thin; the MDX plugin, the four-token highlight theme, post discovery and the feed writers live beside them in `config/`, covered by `tsconfig.node.json`.
 
 ## Gotchas
 
@@ -58,11 +60,17 @@ These cost time when rediscovered:
 - **Vendored primitives arrive with their own palette.** Their vocabulary is aliased onto the project palette in the Tailwind entry; never maintain a second set of tokens.
 - **Shiki must not reach the client bundle.** Highlighting is build-time only — verify no `shiki` chunk ships.
 - **Import Lucide icons individually**, never as a namespace import.
-- **jsdom implements no `matchMedia`.** The test setup stubs it; components reading pointer or motion preferences throw without it.
+- **jsdom implements no `matchMedia` and no `IntersectionObserver`.** The test setup stubs both; components reading pointer or motion preferences throw without them.
+- **An eager `import.meta.glob` leaks drafts into the bundle.** Its keys are emitted as string literals, so the draft slug and its prose ship even when filtered at runtime. The registry reads `virtual:published-posts` instead, built from published files only.
+- **JSX at the start of a line in `.mdx` becomes a block.** A `<Keyword>` that opens a line splits the paragraph in two. Keep it mid-line; Prettier will otherwise surround it with blank lines and make it permanent.
+- **Motion decides at mount whether an element is a variant root.** Declaring `initial`, `animate` or any `while*` variant label sets `isControllingVariants`, and such an element never registers as a stagger child. The pointer gate resolves after hydration, so `Keyword` is keyed on which path it takes and remounts once.
+- **`whileInView` does not propagate its variant to children.** Use `useInView` and drive `animate` for anything that has to orchestrate a stagger.
+- **Motion applies `initial` during prerender.** An `initial={{ opacity: 0 }}` entrance ships invisible HTML; the article entrance is a CSS animation for that reason.
+- **The icon sprite ships its own palette.** Its fills and strokes are `currentColor` so the footer can tint them with the ink tokens.
 
 ## Assets
 
-`public/icons.svg` is a sprite of `<symbol>` elements: `bluesky-icon`, `discord-icon`, `documentation-icon`, `github-icon`, `social-icon`, `x-icon`. Use `<svg><use href="/icons.svg#github-icon" /></svg>`. Everything else comes from Lucide.
+`public/icons.svg` is a sprite of `<symbol>` elements: `bluesky-icon`, `discord-icon`, `documentation-icon`, `github-icon`, `social-icon`, `x-icon`. Use `<svg><use href="/icons.svg#github-icon" /></svg>`, or the `SpriteIcon` primitive. Everything else comes from Lucide. `public/test-categories.svg` is an authored diagram and carries its own `prefers-color-scheme` styles, since an SVG loaded through `<img>` cannot read the page's tokens.
 
 ## Skills
 

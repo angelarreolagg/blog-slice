@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "react-router dev",
     "build": "react-router typegen && tsc -b && react-router build",
-    "preview": "vite preview",
+    "preview": "vite preview --config config/preview.config.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -62,7 +62,6 @@
     "husky": "^9.1.7",
     "jsdom": "^30.0.1",
     "lint-staged": "^17.4.1",
-    "playwright": "^1.62.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "rehype-pretty-code": "^0.14.5",

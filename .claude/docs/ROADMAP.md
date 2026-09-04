@@ -96,25 +96,25 @@ The current project is a plain Vite SPA. Framework mode is what makes prerenderi
 per-route metadata, and file-based routing possible. Nothing else can start until this
 lands.
 
-- [ ] Install routing dependencies: `react-router@^8.3.1`, `@react-router/dev@^8.3.1`
-- [ ] Create `react-router.config.ts` with `appDirectory: "src/app"`, `ssr: false`, and a
+- [x] Install routing dependencies: `react-router@^8.3.1`, `@react-router/dev@^8.3.1`
+- [x] Create `react-router.config.ts` with `appDirectory: "src/app"`, `ssr: false`, and a
       `prerender` function (the `publishedSlugs()` body arrives in Phase 2 — stub it to
       return `getStaticPaths()` only for now)
-- [ ] Create `src/app/root.tsx` (document shell with `<Meta />`, `<Links />`,
+- [x] Create `src/app/root.tsx` (document shell with `<Meta />`, `<Links />`,
       `<Scripts />`), `src/app/routes.ts`, and `src/app/entry.client.tsx`
-- [ ] Replace `@vitejs/plugin-react` with `reactRouter()` in `vite.config.ts`, and
+- [x] Replace `@vitejs/plugin-react` with `reactRouter()` in `vite.config.ts`, and
       **uninstall** `@vitejs/plugin-react` — keeping both double-transforms JSX and
       breaks Fast Refresh
-- [ ] Change the build script to `react-router typegen && tsc -b && react-router build`
-- [ ] Add `.react-router/types/**/*` to `include` and `rootDirs` in `tsconfig.app.json`
-- [ ] Add `.react-router/` to `.gitignore`
-- [ ] Pin Node: `.nvmrc` with `26.4.0` and an `engines.node` field in `package.json`
-- [ ] Delete the scaffold `src/App.tsx` and the unused `src/assets/react.svg` /
+- [x] Change the build script to `react-router typegen && tsc -b && react-router build`
+- [x] Add `.react-router/types/**/*` to `include` and `rootDirs` in `tsconfig.app.json`
+- [x] Add `.react-router/` to `.gitignore`
+- [x] Pin Node: `.nvmrc` with `26.4.0` and an `engines.node` field in `package.json`
+- [x] Delete the scaffold `src/App.tsx` and the unused `src/assets/react.svg` /
       `src/assets/vite.svg`
-- [ ] Move existing files into their FSD layers: `src/components/ui` → `src/shared/ui`,
+- [x] Move existing files into their FSD layers: `src/components/ui` → `src/shared/ui`,
       `src/lib/utils.ts` → `src/shared/lib/utils.ts`, `src/index.css` →
       `src/app/styles/index.css`; update `components.json` to match
-- [ ] Swap the typeface: remove `@fontsource-variable/geist`, add
+- [x] Swap the typeface: remove `@fontsource-variable/geist`, add
       `@fontsource-variable/inter` and `@fontsource-variable/newsreader` (italic subset
       only), imported from the app entry before the Tailwind stylesheet
 
@@ -128,22 +128,22 @@ contains real rendered markup rather than an empty `<div id="root">`.
 Prove that an `.mdx` file can become a typed, styled, syntax-highlighted React route
 before writing any real content against it.
 
-- [ ] Install MDX dependencies: `@mdx-js/react@^3.1.1`, and as dev deps
+- [x] Install MDX dependencies: `@mdx-js/react@^3.1.1`, and as dev deps
       `@mdx-js/rollup@^3.1.1`, `@types/mdx@^2.0.14`
-- [ ] Install content plugins: `remark-frontmatter@^5.0.0`,
+- [x] Install content plugins: `remark-frontmatter@^5.0.0`,
       `remark-mdx-frontmatter@^5.2.0`, `remark-gfm@^4.0.1`, `rehype-slug@^6.0.0`,
       `rehype-pretty-code@^0.14.5`, `shiki@^4.4.3`
-- [ ] Register `@mdx-js/rollup` in `vite.config.ts` with `enforce: "pre"` — it must run
+- [x] Register `@mdx-js/rollup` in `vite.config.ts` with `enforce: "pre"` — it must run
       before React Router's transform
-- [ ] Set `providerImportSource: "@mdx-js/react"` — **without it `MDXProvider` is
+- [x] Set `providerImportSource: "@mdx-js/react"` — **without it `MDXProvider` is
       silently ignored** and the component map never applies
-- [ ] Wire the remark chain (`remarkFrontmatter`, `remarkMdxFrontmatter` with
+- [x] Wire the remark chain (`remarkFrontmatter`, `remarkMdxFrontmatter` with
       `{ name: "frontmatter" }`, `remarkGfm`) and the rehype chain (`rehypeSlug`,
       `rehypePrettyCode`)
-- [ ] Create `src/mdx.d.ts` declaring `*.mdx` with a typed `frontmatter` named export
-- [ ] Create `src/entities/post/model/types.ts` with `PostFrontmatter`, `PostModule`,
+- [x] Create `src/mdx.d.ts` declaring `*.mdx` with a typed `frontmatter` named export
+- [x] Create `src/entities/post/model/types.ts` with `PostFrontmatter`, `PostModule`,
       `PostSummary`
-- [ ] Add one throwaway `.mdx` file and render it through a temporary route
+- [x] Add one throwaway `.mdx` file and render it through a temporary route
 
 **Done when:** the throwaway post renders, `frontmatter` is typed at the import site
 (not `any`), a fenced code block is highlighted in the built HTML, and grepping
@@ -156,18 +156,18 @@ before writing any real content against it.
 Replace the throwaway file with a real corpus and the discovery logic that turns files
 into routes.
 
-- [ ] Write 3 published posts in Spanish: - SOLID principles applied to React components - Testing strategy for React applications - Feature-Sliced Design as a frontend architecture
-- [ ] Each post must exercise the full element surface: `h2`–`h4`, ordered and unordered
+- [x] Write 3 published posts in Spanish: - SOLID principles applied to React components - Testing strategy for React applications - Feature-Sliced Design as a frontend architecture
+- [x] Each post must exercise the full element surface: `h2`–`h4`, ordered and unordered
       lists, inline code, fenced code blocks, a blockquote, an image, a table, and all
       four `<Keyword>` variants
-- [ ] Give the three posts distinct dates and at least one shared tag, so ordering and
+- [x] Give the three posts distinct dates and at least one shared tag, so ordering and
       repeated tags are both observable
-- [ ] Add the 4th file as a `draft: true` stub
-- [ ] Create `src/entities/post/model/registry.ts` — eager glob, draft filter, date sort,
+- [x] Add the 4th file as a `draft: true` stub
+- [x] Create `src/entities/post/model/registry.ts` — eager glob, draft filter, date sort,
       plus `getPost(slug)`
-- [ ] Implement `publishedSlugs()` in `react-router.config.ts` using `gray-matter`
+- [x] Implement `publishedSlugs()` in `react-router.config.ts` using `gray-matter`
       (`pnpm add -D gray-matter@^4.0.3`) and feed it into `prerender`
-- [ ] Build the index route (`/`) listing posts, and the post route (`/blog/:slug`)
+- [x] Build the index route (`/`) listing posts, and the post route (`/blog/:slug`)
 
 **Done when:** the index lists exactly 3 posts newest-first, `dist/blog/` contains one
 directory per published post, and the draft's slug appears **nowhere** in `dist/`.
@@ -179,22 +179,22 @@ directory per published post, and the draft's slug appears **nowhere** in `dist/
 Implements the style document. Every later phase styles against these tokens, so nothing
 visual is finalised before this lands.
 
-- [ ] Replace the generated token block with the two-layer palette: raw `--p-*` values in
+- [x] Replace the generated token block with the two-layer palette: raw `--p-*` values in
       `:root`, overridden for dark mode, mapped to semantic names in `@theme`
-- [ ] Switch the dark-mode mechanism from a class to `data-theme`, with a `@custom-variant`
+- [x] Switch the dark-mode mechanism from a class to `data-theme`, with a `@custom-variant`
       that lets the system preference win when no explicit choice is stored
-- [ ] Alias the vendored primitives' vocabulary (`background`, `foreground`,
+- [x] Alias the vendored primitives' vocabulary (`background`, `foreground`,
       `muted-foreground`, `border`, `ring`) onto the same palette so generated components
       render project colours without being rewritten
-- [ ] Declare the full type scale as `--text-*` tokens with their line heights, weights,
+- [x] Declare the full type scale as `--text-*` tokens with their line heights, weights,
       and letter spacing
-- [ ] Declare `--font-sans`, `--font-serif`, `--font-mono`, the radius scale, the easings,
+- [x] Declare `--font-sans`, `--font-serif`, `--font-mono`, the radius scale, the easings,
       and the two container widths
-- [ ] Build the `.prose` component layer with `:where()` so utilities can always override
+- [x] Build the `.prose` component layer with `:where()` so utilities can always override
       it: block rhythm in `em`, heading spacing weighted above rather than below,
       `text-wrap: pretty` on paragraphs and `balance` on headings
-- [ ] Scope the serif italic to `<em>` and `<blockquote>`, and nowhere else
-- [ ] Verify contrast with a real tool in both modes — OKLCH lightness is not WCAG
+- [x] Scope the serif italic to `<em>` and `<blockquote>`, and nowhere else
+- [x] Verify contrast with a real tool in both modes — OKLCH lightness is not WCAG
       relative luminance, so the numbers cannot be eyeballed
 
 **Done when:** no component contains a raw colour value, every token generates the utility
@@ -206,20 +206,20 @@ it is supposed to, and text clears 4.5:1 in both modes.
 
 The prose rendering layer. Independent of Phase 5.
 
-- [ ] Implement the full element map — `h1`–`h4`, `a`, `ul`/`ol`/`li`, `blockquote`,
+- [x] Implement the full element map — `h1`–`h4`, `a`, `ul`/`ol`/`li`, `blockquote`,
       `code`, `pre`, `img`, `hr`, and table elements
-- [ ] `Heading` — consume the `rehype-slug` id and render an anchor with an accessible
+- [x] `Heading` — consume the `rehype-slug` id and render an anchor with an accessible
       name (not a bare `#`)
-- [ ] `CodeBlock` — four highlight tokens only, a copy button revealed on hover and
+- [x] `CodeBlock` — four highlight tokens only, a copy button revealed on hover and
       always on `focus-visible`, and a scrollable region with an accessible name
-- [ ] `ProseLink` — underlined text in prose colour, never the accent; external links
+- [x] `ProseLink` — underlined text in prose colour, never the accent; external links
       get `rel="noopener noreferrer"` and an indicator glyph outside the link text
-- [ ] `ProseImage` — **require** explicit `width` and `height`; there is no image
+- [x] `ProseImage` — **require** explicit `width` and `height`; there is no image
       pipeline, so CLS prevention is manual
-- [ ] `Blockquote` and `Figure` — the serif italic lives in the first, explicit
+- [x] `Blockquote` and `Figure` — the serif italic lives in the first, explicit
       dimensions in the second
-- [ ] Register the map in `MDXProvider` on the post route
-- [ ] Vendor any needed primitives with `pnpm dlx shadcn@latest add <component>`, then
+- [x] Register the map in `MDXProvider` on the post route
+- [x] Vendor any needed primitives with `pnpm dlx shadcn@latest add <component>`, then
       restyle them onto project tokens before use
 
 **Done when:** a post exercising every supported element renders with no unstyled
@@ -231,23 +231,23 @@ browser-default fallback anywhere on the page.
 
 The product differentiator. This is the phase the rest of the project exists to support.
 
-- [ ] `src/shared/lib/use-pointer-capability.ts` — `useSyncExternalStore` over
+- [x] `src/shared/lib/use-pointer-capability.ts` — `useSyncExternalStore` over
       `(hover: hover) and (pointer: fine)`, with the server snapshot returning `true`
       so prerendered HTML matches the resting state on every device
-- [ ] `AnimatedParagraph` — orchestrates `staggerChildren`, but **only** when the device
+- [x] `AnimatedParagraph` — orchestrates `staggerChildren`, but **only** when the device
       cannot hover; on hover-capable devices it stays in `rest`
-- [ ] `InteractiveWord` — shared `rest`/`active` variant vocabulary so hover and stagger
+- [x] `InteractiveWord` — shared `rest`/`active` variant vocabulary so hover and stagger
       converge on the same visual state
-- [ ] Implement the underline as a separate absolutely-positioned element animated with
+- [x] Implement the underline as a separate absolutely-positioned element animated with
       `scaleX` and `origin-left` — **not** by animating `background-size`, which repaints
       the word's box every frame
-- [ ] Implement the three tones (`note`, `define`, `reference`) as underline treatments
+- [x] Implement the three tones (`note`, `define`, `reference`) as underline treatments
       — dotted, solid, dashed — all in the single accent. Tones never differ by colour
-- [ ] Add reduced-motion branches to both components that render the final revealed state
-- [ ] Mark the underline element `aria-hidden`
-- [ ] Confirm `<Keyword>` has no `tabIndex`, no `role`, and no cursor change — it is
+- [x] Add reduced-motion branches to both components that render the final revealed state
+- [x] Mark the underline element `aria-hidden`
+- [x] Confirm `<Keyword>` has no `tabIndex`, no `role`, and no cursor change — it is
       decorative emphasis, not a control
-- [ ] Verify the resting state clears 4.5:1 in both modes: a word that never reveals must
+- [x] Verify the resting state clears 4.5:1 in both modes: a word that never reveals must
       still be fully readable. This is what makes a decorative reveal acceptable
 
 **Done when:** hovering reveals a word on desktop; emulating a coarse pointer produces
@@ -262,21 +262,21 @@ Motion-driven value for the same property.
 
 ## Phase 6 — Shell, Navigation and Theme
 
-- [ ] Flesh out `src/app/root.tsx`: header, footer, and a skip-to-content link
-- [ ] Add a root error boundary
-- [ ] Build the 404 route
-- [ ] Theme toggle with `localStorage` persistence, setting `data-theme` on `<html>`.
+- [x] Flesh out `src/app/root.tsx`: header, footer, and a skip-to-content link
+- [x] Add a root error boundary
+- [x] Build the 404 route
+- [x] Theme toggle with `localStorage` persistence, setting `data-theme` on `<html>`.
       Three states — light, dark, and following the system — and it lives in the footer,
       not the header: it is not the page's primary action
-- [ ] **Inline pre-paint script in `app/root.tsx`** that reads the stored preference and
+- [x] **Inline pre-paint script in `app/root.tsx`** that reads the stored preference and
       applies `data-theme` before first paint. This is mandatory, not optional: the HTML
       is prerendered, so there is no server to resolve the theme and the page will
       otherwise flash the wrong palette on every load
-- [ ] Declare `color-scheme` in both modes so scrollbars and native controls match
-- [ ] Theme switching is not animated — a full-page crossfade flashes an intermediate grey
-- [ ] Fall back to `prefers-color-scheme` when no preference is stored
-- [ ] Ensure the toggle is keyboard reachable and announces its state with `aria-pressed`
-- [ ] Header and footer are static, never sticky
+- [x] Declare `color-scheme` in both modes so scrollbars and native controls match
+- [x] Theme switching is not animated — a full-page crossfade flashes an intermediate grey
+- [x] Fall back to `prefers-color-scheme` when no preference is stored
+- [x] Ensure the toggle is keyboard reachable and announces its state with `aria-pressed`
+- [x] Header and footer are static, never sticky
 
 **Done when:** reloading the site in either theme, with a hard refresh and an empty
 cache, produces no visible flash of the opposite palette.
@@ -288,15 +288,15 @@ cache, produces no visible flash of the opposite palette.
 Prerendering is what makes this phase meaningful — it is why the project is not a plain
 SPA.
 
-- [ ] Export `meta` from the post route: title, description, `og:title`,
+- [x] Export `meta` from the post route: title, description, `og:title`,
       `og:description`, `og:type: article`
-- [ ] Export `meta` from the index route
-- [ ] Generate `sitemap.xml` in the `buildEnd` hook of `react-router.config.ts`, from
+- [x] Export `meta` from the index route
+- [x] Generate `sitemap.xml` in the `buildEnd` hook of `react-router.config.ts`, from
       the same `publishedSlugs()` source used for prerendering
-- [ ] Generate `rss.xml` from the same source
-- [ ] Add `robots.txt`
-- [ ] Set `<html lang="es">` — the prose is Spanish
-- [ ] Add canonical URLs
+- [x] Generate `rss.xml` from the same source
+- [x] Add `robots.txt`
+- [x] Set `<html lang="es">` — the prose is Spanish
+- [x] Add canonical URLs
 
 **Done when:** viewing source on a built post shows the full prose and correct OG tags
 without executing JavaScript, and the draft post appears in none of `sitemap.xml`,
@@ -306,15 +306,15 @@ without executing JavaScript, and the draft post appears in none of `sitemap.xml
 
 ## Phase 8 — Quality Gates and Deploy
 
-- [ ] **Accessibility:** verify contrast in both themes for both keyword states; confirm
+- [x] **Accessibility:** verify contrast in both themes for both keyword states; confirm
       full keyboard traversal; confirm a screen reader announces keyword text as ordinary
       prose with no interactive affordance; confirm the reduced-motion path
-- [ ] **Performance:** compare the bundle against the ~190 kB JS / ~60 kB gzip scaffold
+- [x] **Performance:** compare the bundle against the ~190 kB JS / ~60 kB gzip scaffold
       baseline; confirm Lucide icons are individually imported; confirm no `shiki` chunk
       ships; confirm zero CLS on a post with images
-- [ ] Confirm the keyword budget of 6 per paragraph holds across the corpus
-- [ ] Run the style document's review checklist against every page
-- [ ] Run `pnpm lint` clean
+- [x] Confirm the keyword budget of 6 per paragraph holds across the corpus
+- [x] Run the style document's review checklist against every page
+- [x] Run `pnpm lint` clean
 - [ ] Create the Vercel project — framework preset Vite, build command `pnpm build`,
       output `dist`. No base path configuration is needed
 - [ ] Verify prerendered routes resolve correctly on Vercel, including a deep link
@@ -322,6 +322,11 @@ without executing JavaScript, and the draft post appears in none of `sitemap.xml
 
 **Done when:** the production URL is live and Lighthouse scores ≥ 95 on both
 Accessibility and SEO.
+
+> The two unchecked steps need the Vercel account itself. `vercel.json` pins the
+> preset, build command and output directory, and `pnpm preview` now serves
+> `dist/` the way a static host does, so a deep link and an unknown path can be
+> checked locally before the deploy.
 
 ---
 
