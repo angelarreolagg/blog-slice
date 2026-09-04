@@ -1,3 +1,10 @@
+import Throwaway, { frontmatter } from "@/content/posts/__throwaway.mdx";
+
 export default function HomeRoute() {
-  return <h1>blog</h1>;
+  return (
+    <main>
+      <h1>{frontmatter.title}</h1>
+      <Throwaway />
+    </main>
+  );
 }
