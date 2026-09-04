@@ -1,0 +1,298 @@
+---
+title: "React Native y Expo: el entorno de EAS y cómo funcionan las actualizaciones OTA"
+description: "Qué es una app de React Native por dentro, qué añade Expo, para qué sirve cada pieza de EAS y por qué una actualización puede llegar sin pasar por la tienda."
+date: 2026-04-08
+tags: ["react-native", "expo", "react"]
+draft: false
+---
+
+Si vienes de la web, la primera sorpresa de una app móvil es que no hay
+"desplegar y listo". Hay un binario que se instala, una tienda que lo revisa y
+un usuario que decide cuándo actualizar. Esta nota explica qué hay dentro de ese
+binario cuando lo escribes con <Keyword tone="define">React Native</Keyword>, qué
+añade <Keyword tone="define">Expo</Keyword> encima, y cómo una parte de la app
+puede cambiar sin volver a pasar por la tienda.
+
+## Qué es React Native, en una frase
+
+React Native es React dibujando vistas nativas. Escribes componentes en
+JavaScript o TypeScript, y en lugar de convertirse en `<div>` se convierten en
+un `UIView` en iOS o en una `View` de Android. No es una página web dentro de
+una app: los botones son botones del sistema, el scroll es el scroll del sistema.
+
+Para que ese JavaScript pueda hablar con el sistema hace falta código nativo
+compilado: el motor que ejecuta tu JS, los módulos que exponen la cámara o las
+notificaciones, y el proyecto de Xcode o Gradle que lo empaqueta todo. Ese
+conjunto es lo que la tienda recibe.
+
+## Qué añade Expo
+
+Expo es tres cosas que suelen confundirse. Un <Keyword tone="note">SDK</Keyword>
+de módulos nativos ya escritos (cámara, ubicación, notificaciones) con la misma
+API en ambas plataformas. Unas herramientas: `npx expo start` para desarrollar,
+Expo Go para probar sin compilar nada, y un _development build_ cuando necesitas
+módulos propios. Y unos servicios en la nube, que son de lo que trata el resto
+de esta nota.
+
+La idea que sostiene todo lo demás es que **el proyecto nativo se genera**. Tú
+mantienes `app.json` y tus dependencias; Expo produce las carpetas `ios` y
+`android` a partir de ahí cuando hacen falta. Eso significa que casi nunca abres
+Xcode, y que el binario se puede reconstruir desde cero en una máquina que no es
+la tuya.
+
+## Las dos capas de una app
+
+Este es el modelo mental que hace que el resto encaje. Una app hecha con Expo
+tiene dos capas, y cada una cambia de una forma distinta. Toca una para ver qué
+contiene:
+
+<Layers
+  label="Las dos capas de una app con Expo"
+  items={[
+    {
+      id: "js",
+      label: "Capa JavaScript",
+      note: "Tu código, tus componentes, las imágenes y fuentes que importas. Es lo que viaja en una actualización OTA.",
+    },
+    {
+      id: "native",
+      label: "Capa nativa",
+      note: "El motor de JS, los módulos nativos, permisos, icono y pantalla de arranque. Solo cambia con un build nuevo.",
+    },
+  ]}
+/>
+
+La capa nativa es el binario: lo que se instala desde la tienda. La capa
+JavaScript es el <Keyword tone="define">bundle</Keyword>: un archivo con todo tu
+código empaquetado, más sus recursos. El binario lleva un bundle dentro, el que
+existía cuando se compiló, y sabe pedir otro más nuevo.
+
+## Qué es EAS
+
+Las siglas <Keyword tone="define">EAS</Keyword> significan Expo Application
+Services: los servicios en la nube que se encargan de la parte de una app que no
+es escribir componentes. Son tres, y cada uno responde a una pregunta.
+
+### EAS Build: ¿cómo consigo el binario?
+
+Compila la capa nativa en servidores de Expo. Sin Mac para iOS, sin instalar
+Android Studio. El resultado es un `.ipa` o un `.apk` listo para instalar o
+para enviar a la tienda.
+
+### EAS Submit: ¿cómo lo envío a la tienda?
+
+Toma ese binario y lo sube a App Store Connect o a Google Play con un comando,
+gestionando credenciales y certificados por ti.
+
+### EAS Update: ¿cómo cambio la app sin volver a la tienda?
+
+Publica una nueva capa JavaScript y la reparte a los binarios que ya están
+instalados. Es lo que se conoce como actualización <Keyword tone="define">OTA</Keyword>,
+_over the air_. De aquí en adelante, hablaremos casi solo de esto.
+
+Los dos caminos, uno al lado del otro:
+
+<Flow
+  label="El camino de un build"
+  steps={[
+    { id: "code", label: "Código" },
+    { id: "build", label: "eas build" },
+    { id: "submit", label: "eas submit" },
+    { id: "store", label: "Tienda" },
+  ]}
+/>
+
+<Flow
+  label="El camino de una actualización"
+  steps={[
+    { id: "code", label: "Código" },
+    { id: "update", label: "eas update" },
+    { id: "device", label: "Dispositivo" },
+  ]}
+/>
+
+El segundo camino es más corto porque solo mueve la capa JavaScript. Esa es
+también su limitación, y volveremos a ella.
+
+## El archivo que lo configura todo: `eas.json`
+
+EAS lee sus instrucciones de un archivo en la raíz del proyecto. Lo importante
+son los <Keyword tone="define">perfiles</Keyword>: recetas con nombre que dicen
+cómo compilar y a qué canal de actualizaciones se conecta el resultado. Tres son
+casi universales:
+
+<Compare label="Perfiles de eas.json" defaultItem="development">
+  <CompareItem id="development" label="development">
+
+Un binario para ti mientras programas. Incluye el _development client_, que
+permite cargar tu código desde el ordenador en lugar del bundle embebido.
+
+```json title="eas.json" {3,4}
+{
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development"
+    }
+  }
+}
+```
+
+  </CompareItem>
+  <CompareItem id="preview" label="preview">
+
+Un binario que se instala directamente, sin tienda, para que alguien del
+equipo lo pruebe. Se comporta como producción pero no pasa por revisión.
+
+```json title="eas.json" {4,5}
+{
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview"
+    }
+  }
+}
+```
+
+  </CompareItem>
+  <CompareItem id="production" label="production">
+
+El que va a la tienda. `autoIncrement` sube el número de build por ti, porque
+la tienda rechaza dos envíos con el mismo.
+
+```json title="eas.json" {4,5}
+{
+  "build": {
+    "production": {
+      "autoIncrement": true,
+      "channel": "production"
+    }
+  }
+}
+```
+
+  </CompareItem>
+</Compare>
+
+Fíjate en que los tres perfiles tienen un `channel`. Ese campo es el puente
+entre los builds y las actualizaciones, y merece su propia sección.
+
+## Cómo funciona una actualización OTA
+
+La pieza que hace posible todo esto se llama `expo-updates`. Es un módulo nativo
+—vive en la capa nativa— cuyo único trabajo es preguntar si hay un bundle más
+nuevo y cambiarlo. Recorre el ciclo paso a paso:
+
+<Steps
+  label="Ciclo de vida de una actualización OTA"
+  steps={[
+    {
+      id: "publish",
+      label: "Publicar",
+      description:
+        "Ejecutas eas update con un mensaje. Expo empaqueta tu capa JavaScript, la sube y la deja disponible en un canal.",
+    },
+    {
+      id: "launch",
+      label: "Arrancar",
+      description:
+        "Un usuario abre la app. Arranca con el bundle que ya tiene, sin esperar a nada: la comprobación ocurre en segundo plano.",
+    },
+    {
+      id: "check",
+      label: "Preguntar",
+      description:
+        "expo-updates consulta al servidor: para este canal y esta versión de runtime, ¿hay algo más nuevo que lo que tengo?",
+    },
+    {
+      id: "download",
+      label: "Descargar",
+      description:
+        "Si lo hay, descarga el bundle y sus recursos y los guarda en el dispositivo. El usuario sigue viendo la versión anterior.",
+    },
+    {
+      id: "apply",
+      label: "Aplicar",
+      description:
+        "En la siguiente apertura, la app arranca con el bundle nuevo. Si no quieres esperar, Updates.reloadAsync() lo aplica al momento.",
+    },
+  ]}
+/>
+
+Dos detalles de este ciclo explican casi todas las dudas que aparecen después.
+La app **nunca se bloquea esperando** una actualización: arranca con lo que
+tiene. Y una actualización recién descargada **se ve en la siguiente apertura**,
+no en la actual, salvo que tu código pida recargar.
+
+## Canales, ramas y versión de runtime
+
+Tres conceptos que se aprenden juntos porque se usan juntos.
+
+| Concepto           | Vive en    | Responde a                                               |
+| ------------------ | ---------- | -------------------------------------------------------- |
+| Canal              | El binario | ¿A qué cola de actualizaciones estoy suscrito?           |
+| Rama               | EAS        | ¿Qué lista ordenada de actualizaciones sirve este canal? |
+| Versión de runtime | Ambos      | ¿Es esta actualización compatible con este binario?      |
+
+El <Keyword tone="define">canal</Keyword> es una etiqueta que el binario lleva
+grabada desde que se compiló; viene del perfil de `eas.json`. La <Keyword tone="define">rama</Keyword>
+es donde `eas update` deja las actualizaciones, y EAS apunta cada canal a una
+rama. Por defecto se llaman igual,
+así que al principio puedes pensar en ellas como una sola cosa.
+
+La <Keyword tone="define">versión de runtime</Keyword> es el seguro que evita
+romper la app. Describe qué capa nativa espera tu JavaScript. Si publicas una
+actualización que usa un módulo nativo nuevo, su versión de runtime cambia, y
+los binarios antiguos simplemente no la ven. Lo más cómodo es dejar que Expo la
+calcule con la política `fingerprint`, que resume el proyecto nativo en un hash:
+
+```json title="app.json" {3}
+{
+  "expo": {
+    "runtimeVersion": { "policy": "fingerprint" },
+    "updates": { "url": "https://u.expo.dev/tu-id-de-proyecto" }
+  }
+}
+```
+
+## Qué puede y qué no puede cambiar una OTA
+
+Vuelve al diagrama de las dos capas. Todo lo que vive en la capa JavaScript se
+puede actualizar por el aire; todo lo que vive en la capa nativa necesita un
+build nuevo y, si va a la tienda, una revisión.
+
+<Callout tone="warning">
+  Una actualización OTA nunca cambia código nativo. Añadir una dependencia con
+  módulos nativos, cambiar permisos, el icono, la pantalla de arranque o subir
+  la versión del SDK de Expo son cambios de la capa nativa: `eas build` y, para
+  producción, `eas submit`.
+</Callout>
+
+Sí puedes cambiar sin build: componentes, estilos, lógica, textos, imágenes y
+fuentes que importas desde JavaScript, y las llamadas a APIs que ya existían. En
+la práctica es la mayor parte del trabajo diario, y por eso la herramienta
+importa tanto.
+
+## Cuando algo sale mal
+
+Publicar una actualización rota se arregla publicando otra, y `expo-updates`
+no aplica nada que no consiga descargar entero. Si necesitas volver a un estado
+conocido sin esperar a arreglar el código, tienes dos comandos:
+
+<Callout tone="note">
+  `eas update:republish` vuelve a publicar una actualización anterior como si
+  fuera nueva. `eas update:rollback` va más lejos: puede dejar el canal
+  apuntando al bundle que viene embebido en el binario, el que salió de la
+  tienda.
+</Callout>
+
+Ninguno de los dos toca la capa nativa, así que ambos llegan a los usuarios por
+el mismo ciclo de arriba: en la siguiente apertura.
+
+---
+
+Si te quedas con una sola idea, que sea la de las dos capas. Casi cada decisión
+—qué comando ejecutar, por qué una actualización no llega, qué necesita pasar
+por la tienda— se responde preguntando en cuál de las dos vive el cambio.

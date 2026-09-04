@@ -87,16 +87,34 @@ medias.
 
 ## Una nota sobre la cobertura
 
-No hay un número objetivo. Un 90 % alcanzado a base de renderizar componentes sin
-afirmar nada es peor que un 60 % concentrado en las tres categorías de arriba,
-porque el primero da confianza sin darla.
+<Callout tone="note">
+  No hay un número objetivo. Un 90 % alcanzado a base de renderizar componentes
+  sin afirmar nada es peor que un 60 % concentrado en las tres categorías de
+  arriba, porque el primero da confianza sin darla.
+</Callout>
 
-<Figure
-  src="/test-categories.svg"
-  alt="Tres bandas apiladas: lógica pura en la base, comportamiento observable en el centro y contratos de accesibilidad arriba, ordenadas de la más barata a la más cara de escribir"
-  width={1120}
-  height={560}
-  caption="Las tres categorías, de la más barata a la más cara de escribir."
+Las tres categorías, de la más cara a la más barata de escribir. Toca una para
+verla sola:
+
+<Layers
+  label="Las tres categorías de prueba"
+  items={[
+    {
+      id: "a11y",
+      label: "Contratos de accesibilidad",
+      note: "Rol, ARIA, foco, teclado. Invisibles en una revisión visual.",
+    },
+    {
+      id: "behavior",
+      label: "Comportamiento observable",
+      note: "Lo que una persona puede hacer y ver.",
+    },
+    {
+      id: "logic",
+      label: "Lógica pura",
+      note: "Ordenar, filtrar, formatear. Sin DOM y sin tiempo.",
+    },
+  ]}
 />
 
 Al final la pregunta sigue siendo la misma: si borro esta prueba, ¿me entero de

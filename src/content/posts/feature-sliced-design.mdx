@@ -15,14 +15,49 @@ automáticamente.
 ## Las capas
 
 Seis capas, ordenadas. Un módulo importa únicamente de capas estrictamente
-inferiores a la suya.
+inferiores a la suya. Toca una capa para ver hasta dónde puede llegar un import
+que sale de ella:
 
-1. `app` — enrutado, proveedores, estilos globales.
-2. `pages` — una pantalla cada una.
-3. `widgets` — bloques compuestos reutilizables.
-4. `features` — una interacción con estado propio.
-5. `entities` — modelos de dominio y sus componentes.
-6. `shared` — primitivas, utilidades, configuración.
+<Layers
+  label="Las seis capas y lo que cada una puede importar"
+  items={[
+    {
+      id: "app",
+      label: "app",
+      note: "Enrutado, proveedores, estilos globales.",
+      reaches: ["pages", "widgets", "features", "entities", "shared"],
+    },
+    {
+      id: "pages",
+      label: "pages",
+      note: "Una pantalla cada una.",
+      reaches: ["widgets", "features", "entities", "shared"],
+    },
+    {
+      id: "widgets",
+      label: "widgets",
+      note: "Bloques compuestos reutilizables.",
+      reaches: ["features", "entities", "shared"],
+    },
+    {
+      id: "features",
+      label: "features",
+      note: "Una interacción con estado propio.",
+      reaches: ["entities", "shared"],
+    },
+    {
+      id: "entities",
+      label: "entities",
+      note: "Modelos de dominio y sus componentes.",
+      reaches: ["shared"],
+    },
+    {
+      id: "shared",
+      label: "shared",
+      note: "Primitivas, utilidades, configuración. No importa de nadie.",
+    },
+  ]}
+/>
 
 La consecuencia práctica aparece al leer un import: la dirección de la flecha ya
 dice si el cambio es local o si va a arrastrar media aplicación.
@@ -84,6 +119,19 @@ delegan el render a una página:
 export { meta } from "@/pages/post-detail";
 export { default } from "@/pages/post-detail";
 ```
+
+Una petición baja por la misma escalera siempre, y cada escalón sabe menos que
+el anterior sobre el framework:
+
+<Flow
+  label="Cómo se sirve una ruta"
+  steps={[
+    { id: "route", label: "Módulo de ruta" },
+    { id: "page", label: "Página" },
+    { id: "widget", label: "Widget" },
+    { id: "entity", label: "Entidad" },
+  ]}
+/>
 
 ### El caso de los datos
 

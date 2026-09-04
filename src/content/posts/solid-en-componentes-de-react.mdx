@@ -51,6 +51,15 @@ function PostList({ posts, onSelect }: PostListProps) {
 la propiedad que queremos: es lo que permite montarlo en una prueba sin red, sin
 router y sin store.
 
+<Flow
+  label="Los datos bajan, los eventos suben"
+  steps={[
+    { id: "data", label: "Datos" },
+    { id: "component", label: "Componente" },
+    { id: "event", label: "Evento" },
+  ]}
+/>
+
 ## Abierto/cerrado, o el argumento a favor de `children`
 
 Extender sin modificar, en React, se llama <Keyword tone="note">composición</Keyword>. Cada
@@ -74,9 +83,12 @@ decida qué va dentro.
 ## Sustitución de Liskov sin herencia
 
 Sin clases el principio se traduce a algo más simple: **si un componente acepta
-las props de un elemento nativo, debe comportarse como ese elemento nativo**. Un
-`Button` que se traga `type` y siempre envía el formulario ha roto el contrato,
-aunque compile.
+las props de un elemento nativo, debe comportarse como ese elemento nativo**.
+
+<Callout tone="warning">
+  Un `Button` que se traga `type` y siempre envía el formulario ha roto el
+  contrato, aunque compile. El compilador no ve la promesa; la ve quien pulsa.
+</Callout>
 
 - Reenvía `ref` si el original lo acepta.
 - No descartes `onClick` silenciosamente.
