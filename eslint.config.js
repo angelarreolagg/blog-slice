@@ -9,14 +9,19 @@ import { defineConfig, globalIgnores } from "eslint/config";
 
 const LAYERS = ["app", "pages", "widgets", "features", "entities", "shared"];
 
-// A layer may import only from layers below it.
-const allowedDependencies = LAYERS.map((layer, index) => ({
-  from: [layer],
-  allow: LAYERS.slice(index + 1),
-}));
+// A layer may import only from layers below it. `app` is the composition root:
+// its framework files, styles and providers legitimately reference each other.
+const layerPolicies = LAYERS.map((layer, index) => {
+  const reachable = LAYERS.slice(layer === "app" ? index : index + 1);
+
+  return {
+    from: [{ element: { type: layer } }],
+    allow: reachable.map((allowed) => ({ to: { element: { type: allowed } } })),
+  };
+});
 
 export default defineConfig([
-  globalIgnores(["dist", "coverage", ".react-router"]),
+  globalIgnores(["dist", "coverage", ".react-router", "build"]),
   {
     files: ["**/*.{ts,tsx}"],
     extends: [
@@ -31,16 +36,20 @@ export default defineConfig([
     plugins: { boundaries },
     settings: {
       "boundaries/include": ["src/**/*"],
-      "boundaries/elements": LAYERS.map((layer) => ({
-        type: layer,
-        pattern: `src/${layer}/*`,
-        capture: ["slice"],
-      })),
+      // `mode: "file"` has no replacement yet; the warning would be the only output.
+      "boundaries/legacy-warnings": false,
+      // The layer graph is meaningless unless the "@/*" alias resolves.
+      "import/resolver": { typescript: { project: "tsconfig.app.json" } },
+      "boundaries/elements": LAYERS.flatMap((layer) => [
+        { type: layer, pattern: `src/${layer}/*`, capture: ["slice"] },
+        // Framework files sit directly in the layer directory, outside any slice.
+        { type: layer, pattern: `src/${layer}/*`, mode: "file" },
+      ]),
     },
     rules: {
-      "boundaries/element-types": [
+      "boundaries/dependencies": [
         2,
-        { default: "disallow", rules: allowedDependencies },
+        { default: "disallow", policies: layerPolicies },
       ],
       "@typescript-eslint/consistent-type-imports": [
         2,
@@ -57,7 +66,7 @@ export default defineConfig([
   },
   {
     files: ["src/**/*.{test,spec}.{ts,tsx}", "src/test/**"],
-    rules: { "boundaries/element-types": 0 },
+    rules: { "boundaries/dependencies": 0 },
   },
   prettier,
 ]);
