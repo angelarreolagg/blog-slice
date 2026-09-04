@@ -9,6 +9,7 @@ export type PostFileFrontmatter = {
   description: string;
   date: string;
   updated?: string;
+  author?: string;
   tags: Array<string>;
   draft: boolean;
 };
@@ -17,7 +18,16 @@ export type PostFile = {
   slug: string;
   filePath: string;
   frontmatter: PostFileFrontmatter;
+  readingMinutes: number;
 };
+
+const WORDS_PER_MINUTE = 200;
+
+function readingMinutesOf(body: string) {
+  const words = body.split(/\s+/u).filter(Boolean).length;
+
+  return Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+}
 
 // YAML parses an unquoted date into a Date; the app models dates as ISO strings.
 function toIsoDate(value: unknown): string {
@@ -28,16 +38,18 @@ function toIsoDate(value: unknown): string {
 
 function readPostFile(root: string, fileName: string): PostFile {
   const filePath = path.join(root, POSTS_DIR, fileName);
-  const { data } = matter(readFileSync(filePath, "utf8"));
+  const { data, content } = matter(readFileSync(filePath, "utf8"));
 
   return {
     slug: fileName.replace(/\.mdx$/, ""),
     filePath,
+    readingMinutes: readingMinutesOf(content),
     frontmatter: {
       title: String(data.title ?? ""),
       description: String(data.description ?? ""),
       date: toIsoDate(data.date),
       updated: data.updated ? toIsoDate(data.updated) : undefined,
+      author: data.author ? String(data.author) : undefined,
       tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
       draft: data.draft === true,
     },

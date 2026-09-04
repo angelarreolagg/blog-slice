@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import type { Plugin } from "vite";
 import { codeTheme, tokenClassTransformer } from "./code-highlight.ts";
+import { remarkHeadings } from "./headings.ts";
 
 export function mdxPlugin(): Plugin {
   return {
@@ -18,6 +19,7 @@ export function mdxPlugin(): Plugin {
         remarkFrontmatter,
         [remarkMdxFrontmatter, { name: "frontmatter" }],
         remarkGfm,
+        remarkHeadings,
       ],
       rehypePlugins: [
         rehypeSlug,

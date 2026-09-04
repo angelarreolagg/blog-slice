@@ -31,7 +31,7 @@ export function publishedPostsPlugin(): Plugin {
       const entries = posts
         .map(
           (post, index) =>
-            `{ slug: ${JSON.stringify(post.slug)}, module: post${index} }`,
+            `{ slug: ${JSON.stringify(post.slug)}, readingMinutes: ${post.readingMinutes}, module: post${index} }`,
         )
         .join(", ");
 
