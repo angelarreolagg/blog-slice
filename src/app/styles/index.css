@@ -153,6 +153,17 @@
   --container-prose: 38rem;
   --container-wide: 52rem;
 
+  --animate-article-enter: article-enter 240ms var(--ease-out-quart);
+
+  @keyframes article-enter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   --spacing: 0.25rem;
   --breakpoint-sm: 40rem;
   --breakpoint-md: 48rem;
@@ -216,6 +227,22 @@
   }
   .prose > :first-child {
     margin-top: 0;
+  }
+
+  .code-token-text {
+    color: var(--color-ink);
+  }
+  .code-token-comment {
+    color: var(--color-code-comment);
+  }
+  .code-token-string {
+    color: var(--color-code-string);
+  }
+  .code-token-keyword {
+    color: var(--color-code-keyword);
+  }
+  .code-token-number {
+    color: var(--color-code-number);
   }
 
   /* The site's typographic gesture: serif italic inside sans prose. */

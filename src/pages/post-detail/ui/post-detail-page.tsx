@@ -1,31 +1,19 @@
-import { motion } from "motion/react";
 import { useParams } from "react-router";
 import { formatPostDate, getPost } from "@/entities/post";
-import { useReducedMotion } from "@/shared/lib/use-reduced-motion";
 import { Tag } from "@/shared/ui/tag";
 import { NotFoundNotice } from "@/widgets/not-found-notice";
-
-const ENTRANCE_EASE = [0.25, 1, 0.5, 1] as const;
 
 export function PostDetailPage() {
   const { slug } = useParams();
   const post = slug ? getPost(slug) : undefined;
-  const prefersReducedMotion = useReducedMotion();
 
   if (!post) return <NotFoundNotice />;
 
   const { Content } = post;
 
   return (
-    <motion.article
-      className="mx-auto w-full max-w-prose px-6 py-16 sm:px-8"
-      initial={{ opacity: prefersReducedMotion ? 1 : 0 }}
-      animate={{ opacity: 1 }}
-      transition={{
-        duration: prefersReducedMotion ? 0 : 0.24,
-        ease: ENTRANCE_EASE,
-      }}
-    >
+    // A CSS entrance keeps the prose visible when the interaction layer never loads.
+    <article className="animate-article-enter mx-auto w-full max-w-prose px-6 py-16 sm:px-8">
       <header className="mb-12">
         <p className="text-ink-faint text-meta tabular-nums" lang="en">
           <time dateTime={post.date}>{formatPostDate(post.date)}</time>
@@ -49,6 +37,6 @@ export function PostDetailPage() {
       <div className="prose">
         <Content />
       </div>
-    </motion.article>
+    </article>
   );
 }

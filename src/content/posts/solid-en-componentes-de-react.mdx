@@ -8,10 +8,9 @@ draft: false
 
 Los cinco principios de SOLID se escribieron pensando en clases, herencia e
 interfaces. React no tiene ninguna de las tres. Aun así, cuatro de los cinco
-siguen siendo útiles si aceptamos que la unidad de diseño es la
-
-<Keyword tone="define">función pura</Keyword> respecto de sus props, y que la
-composición ocupa el lugar que la herencia tenía en 2003.
+siguen siendo útiles si aceptamos que la unidad de diseño es la <Keyword tone="define">función pura</Keyword>
+respecto de sus props, y que la composición ocupa el lugar que la herencia tenía
+en 2003.
 
 ## Responsabilidad única
 
@@ -26,10 +25,9 @@ endpoint, se toca. Cuando el orden pasa a ser configurable, se toca otra vez.
 > El síntoma no es el tamaño del archivo. Es cuántas conversaciones distintas
 > terminan en el mismo commit.
 
-La separación que funciona en la práctica es la que sigue la
-
-<Keyword tone="reference">flujo de datos</Keyword>: los datos bajan, los eventos
-suben, y el componente que pinta no sabe de dónde salió lo que pinta.
+La separación que funciona en la práctica es la que sigue el <Keyword tone="reference">flujo de datos</Keyword>:
+los datos bajan, los eventos suben, y el componente que pinta no sabe de dónde
+salió lo que pinta.
 
 ### Cómo se ve el corte
 
@@ -55,8 +53,8 @@ router y sin store.
 
 ## Abierto/cerrado, o el argumento a favor de `children`
 
-Extender sin modificar, en React, se llama <Keyword tone="note">composición</Keyword>.
-Cada vez que añadimos una prop booleana para cubrir un caso nuevo estamos
+Extender sin modificar, en React, se llama <Keyword tone="note">composición</Keyword>. Cada
+vez que añadimos una prop booleana para cubrir un caso nuevo estamos
 modificando el componente en lugar de extenderlo.
 
 1. `isCompact` aparece porque hay una vista densa.
@@ -104,9 +102,8 @@ El compilador deja de permitir el estado imposible: `status: "loading"` con
 
 El último es el que más se nota en una base de código grande. Un componente no
 debería importar el módulo concreto que hace la petición; debería recibir la
-función que la hace. Eso es literalmente lo que hace un
-
-<Keyword tone="define">hook inyectado</Keyword> en una prueba.
+función que la hace. Eso es literalmente lo que hace un <Keyword tone="define">hook inyectado</Keyword>
+en una prueba.
 
 ---
 

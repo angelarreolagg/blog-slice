@@ -11,7 +11,7 @@ export function PostCard({ post }: PostCardProps) {
   const titleId = useId();
 
   return (
-    <li className="border-line hover:bg-surface has-focus-visible:bg-surface ease-soft rounded-lg border-b transition-colors duration-120 hover:border-transparent has-focus-visible:border-transparent">
+    <li className="border-line hover:bg-surface has-focus-visible:bg-surface ease-soft border-b transition-colors duration-120 hover:rounded-lg hover:border-transparent has-focus-visible:rounded-lg has-focus-visible:border-transparent">
       <Link
         to={`/blog/${post.slug}`}
         aria-labelledby={titleId}
@@ -20,7 +20,9 @@ export function PostCard({ post }: PostCardProps) {
         <h3 id={titleId} className="text-ink text-h3">
           {post.title}
         </h3>
-        <p className="text-ink-muted text-meta mt-1">{post.description}</p>
+        <p className="text-ink-muted text-meta mt-1 max-w-prose">
+          {post.description}
+        </p>
         <p className="text-ink-faint text-meta mt-3 tabular-nums" lang="en">
           <time dateTime={post.date}>{formatPostDate(post.date)}</time>
           {post.tags.length > 0 && <span>{`, ${post.tags.join(", ")}`}</span>}

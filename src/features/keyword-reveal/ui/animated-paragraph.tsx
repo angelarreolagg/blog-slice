@@ -1,4 +1,5 @@
-import { motion, type Variants } from "motion/react";
+import { useRef } from "react";
+import { m, useInView, type Variants } from "motion/react";
 import { usePointerCapability } from "@/shared/lib/use-pointer-capability";
 import { useReducedMotion } from "@/shared/lib/use-reduced-motion";
 import { STAGGER_GAP } from "../model/motion";
@@ -17,16 +18,19 @@ export function AnimatedParagraph({ children }: AnimatedParagraphProps) {
   const prefersReducedMotion = useReducedMotion();
   const staggers = !canHover && !prefersReducedMotion;
 
+  const ref = useRef<HTMLParagraphElement>(null);
+  // whileInView does not propagate its variant to children, so drive it here.
+  const isInView = useInView(ref, { once: true, amount: 0.35 });
+
   return (
-    <motion.p
+    <m.p
+      ref={ref}
       data-reveal={staggers ? "stagger" : "hover"}
       variants={paragraphVariants}
       initial="rest"
-      animate={staggers ? undefined : "rest"}
-      whileInView={staggers ? "active" : undefined}
-      viewport={staggers ? { once: true, amount: 0.35 } : undefined}
+      animate={staggers && isInView ? "active" : "rest"}
     >
       {children}
-    </motion.p>
+    </m.p>
   );
 }

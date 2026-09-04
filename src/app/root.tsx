@@ -40,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <a
           href="#content"
           lang="en"
-          className="bg-bg text-ink border-line focus-visible:outline-accent sr-only rounded-md border px-4 py-2 focus-visible:not-sr-only focus-visible:absolute focus-visible:top-4 focus-visible:left-4 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="focus-visible:border-line focus-visible:bg-bg focus-visible:text-ink focus-visible:outline-accent sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-4 focus-visible:left-4 focus-visible:z-10 focus-visible:rounded-md focus-visible:border focus-visible:px-4 focus-visible:py-2 focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           Skip to content
         </a>

@@ -1,7 +1,13 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { domAnimation, LazyMotion } from "motion/react";
 import { describe, expect, it } from "vitest";
 import { mockMatchMedia } from "@/test/match-media";
 import { Keyword } from "./keyword";
+
+function renderKeyword(ui: React.ReactElement) {
+  return render(<LazyMotion features={domAnimation}>{ui}</LazyMotion>);
+}
 
 describe("Keyword", () => {
   it("renders as prose, not as a control", () => {
@@ -23,6 +29,18 @@ describe("Keyword", () => {
     const { container } = render(<Keyword tone="note">hidratación</Keyword>);
 
     expect(container.querySelectorAll("[aria-hidden]")).toHaveLength(2);
+  });
+
+  it("reveals the word when a fine pointer rests on it", async () => {
+    mockMatchMedia({ "(hover: hover) and (pointer: fine)": true });
+    const user = userEvent.setup();
+    renderKeyword(<Keyword tone="define">hidratación</Keyword>);
+    const word = screen.getByText("hidratación");
+
+    expect(word).toHaveStyle({ opacity: "0.88" });
+    await user.hover(word);
+
+    await waitFor(() => expect(word).toHaveStyle({ opacity: "1" }));
   });
 
   it("renders revealed when the reader asks for less motion", () => {

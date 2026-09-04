@@ -15,10 +15,10 @@ export function SiteFooter() {
           {SITE.name}
         </Link>
 
-        <div className="flex items-center gap-5">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-4">
           <ThemeToggle />
 
-          <ul className="flex items-center gap-4">
+          <ul className="flex flex-wrap items-center gap-x-4 gap-y-3">
             {SOCIAL_LINKS.map((link) => (
               <li key={link.id}>
                 <a

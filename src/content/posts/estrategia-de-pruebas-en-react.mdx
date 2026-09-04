@@ -8,8 +8,8 @@ draft: false
 ---
 
 La mayoría de las suites de pruebas de front-end no fallan porque falte
-cobertura. Fallan porque prueban <Keyword tone="note">implementación</Keyword>: el nombre de un estado interno, el orden de dos
-llamadas, una clase de utilidad. Todo eso cambia en el primer refactor y ninguna
+cobertura. Fallan porque prueban la <Keyword tone="note">implementación</Keyword>:
+el nombre de un estado interno, el orden de dos llamadas, una clase de utilidad. Todo eso cambia en el primer refactor y ninguna
 de esas aserciones dice nada sobre si la interfaz funciona.
 
 ## La pregunta que ordena todo
@@ -38,10 +38,8 @@ it("orders posts newest first", () => {
 
 ### 2. Comportamiento observable
 
-Lo que el usuario puede hacer y ver. La regla práctica es consultar por
-
-<Keyword tone="define">rol accesible</Keyword> antes que por texto, y por texto
-antes que por un `data-testid`.
+Lo que el usuario puede hacer y ver. La regla práctica es consultar por <Keyword tone="define">rol accesible</Keyword>
+antes que por texto, y por texto antes que por un `data-testid`.
 
 ```tsx
 it("reports success after copying", async () => {

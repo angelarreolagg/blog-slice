@@ -1,5 +1,5 @@
 import { cn } from "cn";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { usePointerCapability } from "@/shared/lib/use-pointer-capability";
 import { useReducedMotion } from "@/shared/lib/use-reduced-motion";
 import {
@@ -25,15 +25,20 @@ export function Keyword({ tone = "note", children }: KeywordProps) {
   const canHover = usePointerCapability();
   const prefersReducedMotion = useReducedMotion();
 
+  // Declaring a variant label makes the word its own variant root, which is what
+  // hover needs and exactly what would cut it out of the paragraph's stagger.
+  const isSelfDriven = canHover || prefersReducedMotion;
   const transition = prefersReducedMotion
     ? { duration: 0 }
     : { duration: REVEAL_DURATION, ease: REVEAL_EASE };
 
   return (
-    <motion.span
+    <m.span
+      // Motion decides at mount, and the pointer gate only resolves after it.
+      key={isSelfDriven ? "self-driven" : "staggered"}
       className="relative inline-block max-w-full align-baseline leading-none"
       variants={wordVariants}
-      initial={prefersReducedMotion ? "active" : "rest"}
+      initial={prefersReducedMotion ? "active" : canHover ? "rest" : undefined}
       animate={prefersReducedMotion ? "active" : undefined}
       whileHover={canHover && !prefersReducedMotion ? "active" : undefined}
       transition={transition}
@@ -46,7 +51,7 @@ export function Keyword({ tone = "note", children }: KeywordProps) {
           TONE_UNDERLINE[tone],
         )}
       />
-      <motion.span
+      <m.span
         aria-hidden
         className={cn(
           "border-accent pointer-events-none absolute inset-x-0 -bottom-[0.08em] origin-left border-t",
@@ -55,6 +60,6 @@ export function Keyword({ tone = "note", children }: KeywordProps) {
         variants={underlineVariants}
         transition={transition}
       />
-    </motion.span>
+    </m.span>
   );
 }
