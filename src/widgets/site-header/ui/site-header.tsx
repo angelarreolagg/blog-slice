@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router";
 import { SITE } from "@/shared/config/site";
 
 const LINK_CLASS =
-  "text-ink-faint hover:text-ink transition-colors duration-120 ease-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm";
+  "text-ink-faint hover:text-ink transition-colors duration-(--duration-quick) ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm";
 
 export function SiteHeader() {
   const { pathname } = useLocation();

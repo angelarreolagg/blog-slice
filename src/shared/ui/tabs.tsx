@@ -29,7 +29,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "text-meta text-ink-muted hover:text-ink focus-visible:outline-accent data-active:border-ink data-active:text-ink relative -mb-px inline-flex h-10 shrink-0 cursor-pointer items-center border-b border-transparent px-3 font-medium whitespace-nowrap transition-[color,border-color] duration-150 ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "text-meta text-ink-muted hover:text-ink focus-visible:outline-accent data-active:border-ink data-active:text-ink relative -mb-px inline-flex h-10 shrink-0 cursor-pointer items-center border-b border-transparent px-3 font-medium whitespace-nowrap transition-[color,border-color] duration-(--duration-quick) ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
       {...props}
@@ -45,7 +45,7 @@ function TabsIndicator({ className, ...props }: TabsPrimitive.Indicator.Props) {
       data-slot="tabs-indicator"
       renderBeforeHydration
       className={cn(
-        "bg-ink absolute bottom-0 left-0 h-px w-(--active-tab-width) translate-x-(--active-tab-left) transition-[translate,width] duration-200 ease-out",
+        "bg-ink ease-smooth-out absolute bottom-0 left-0 h-px w-(--active-tab-width) translate-x-(--active-tab-left) transition-[translate,width] duration-(--duration-fast)",
         className,
       )}
       {...props}

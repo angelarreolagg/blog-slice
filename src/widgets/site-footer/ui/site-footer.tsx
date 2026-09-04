@@ -9,7 +9,7 @@ export function SiteFooter() {
       <div className="border-line max-w-wide mx-auto flex w-full flex-col gap-6 border-t px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <Link
           to="/"
-          className="text-ink-faint hover:text-ink ease-soft focus-visible:outline-accent rounded-sm transition-colors duration-120 focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="text-ink-faint hover:text-ink focus-visible:outline-accent rounded-sm transition-colors duration-(--duration-quick) ease-out focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <span aria-hidden>← </span>
           {SITE.name}
@@ -26,7 +26,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={link.label}
-                  className="text-ink-faint hover:text-ink ease-soft focus-visible:outline-accent relative inline-flex rounded-sm transition-colors duration-120 after:absolute after:-inset-3 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2"
+                  className="text-ink-faint hover:text-ink focus-visible:outline-accent relative inline-flex rounded-sm transition-colors duration-(--duration-quick) ease-out after:absolute after:-inset-3 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <SpriteIcon id={link.id} className="size-4" />
                 </a>

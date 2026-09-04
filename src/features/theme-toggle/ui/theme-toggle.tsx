@@ -38,7 +38,8 @@ export function ThemeToggle() {
         aria-hidden
         className={cn(
           "bg-surface-hover absolute top-0.5 left-0.5 size-7 rounded-sm",
-          hasInteracted && "transition-[translate] duration-150 ease-out",
+          hasInteracted &&
+            "ease-smooth-out transition-[translate] duration-(--duration-fast)",
           INDICATOR_OFFSET[theme],
         )}
       />
@@ -53,7 +54,7 @@ export function ThemeToggle() {
             aria-pressed={isActive}
             onClick={() => handleSelect(value)}
             className={cn(
-              "focus-visible:outline-accent relative inline-flex size-7 cursor-pointer items-center justify-center rounded-sm transition-[color] duration-150 ease-out after:absolute after:-inset-x-px after:-inset-y-2 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2",
+              "focus-visible:outline-accent relative inline-flex size-7 cursor-pointer items-center justify-center rounded-sm transition-[color] duration-(--duration-quick) ease-out after:absolute after:-inset-x-px after:-inset-y-2 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2",
               isActive ? "text-ink" : "text-ink-faint hover:text-ink",
             )}
           >

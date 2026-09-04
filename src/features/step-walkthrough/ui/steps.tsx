@@ -6,8 +6,6 @@ import { Button } from "@/shared/ui/button";
 import { Flow } from "@/shared/ui/diagram/flow";
 import type { WalkStep } from "../model/types";
 
-const ENTER_EASE = [0.25, 1, 0.5, 1] as const;
-
 type StepsProps = {
   label: string;
   steps: Array<WalkStep>;
@@ -16,6 +14,9 @@ type StepsProps = {
 export function Steps({ label, steps }: StepsProps) {
   const [index, setIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion();
+  const swap = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration: 0.15, ease: "easeInOut" as const };
   const step = steps[index];
   const isFirst = index === 0;
   const isLast = index === steps.length - 1;
@@ -34,22 +35,18 @@ export function Steps({ label, steps }: StepsProps) {
           <AnimatePresence initial={false} mode="wait">
             <m.p
               key={step.id}
-              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+              initial={{ opacity: 0, y: 4, filter: "blur(2px)" }}
               animate={{
                 opacity: 1,
                 y: 0,
                 filter: "blur(0px)",
-                transition: prefersReducedMotion
-                  ? { duration: 0 }
-                  : { duration: 0.2, ease: ENTER_EASE },
+                transition: swap,
               }}
               exit={{
                 opacity: 0,
-                y: -12,
-                filter: "blur(4px)",
-                transition: prefersReducedMotion
-                  ? { duration: 0 }
-                  : { duration: 0.15, ease: "easeOut" },
+                y: -4,
+                filter: "blur(2px)",
+                transition: swap,
               }}
             >
               <span className="text-ink font-medium">{step.label}. </span>

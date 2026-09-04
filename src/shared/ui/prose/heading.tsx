@@ -31,7 +31,7 @@ export function Heading({ level, id, className, children }: HeadingProps) {
         <a
           href={`#${id}`}
           aria-labelledby={id}
-          className="text-ink-faint hover:text-ink group-hover:blur-0 focus-visible:blur-0 relative ml-2 inline-flex translate-y-px scale-[0.25] opacity-0 blur-[4px] transition-[color,opacity,filter,scale] duration-300 ease-[cubic-bezier(0.2,0,0,1)] group-hover:scale-100 group-hover:opacity-100 after:absolute after:-inset-3.5 after:content-[''] focus-visible:scale-100 focus-visible:opacity-100"
+          className="text-ink-faint hover:text-ink group-hover:blur-0 focus-visible:blur-0 relative ml-2 inline-flex translate-y-px scale-[0.25] opacity-0 blur-[4px] transition-[color,opacity,filter,scale] duration-(--duration-fast) ease-in-out group-hover:scale-100 group-hover:opacity-100 after:absolute after:-inset-3.5 after:content-[''] focus-visible:scale-100 focus-visible:opacity-100"
         >
           <Link2 className="size-4" strokeWidth={2} aria-hidden />
         </a>

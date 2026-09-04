@@ -8,7 +8,7 @@ export type ButtonSize = "sm" | "md";
 const TAP_SCALE = "active:not-disabled:scale-[0.96]";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md text-meta font-medium whitespace-nowrap transition-[background-color,border-color,color,scale] duration-150 ease-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md text-meta font-medium whitespace-nowrap transition-[background-color,border-color,color,scale] duration-(--duration-quick) ease-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {

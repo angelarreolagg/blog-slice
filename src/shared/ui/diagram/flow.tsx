@@ -33,7 +33,7 @@ export function Flow({ label, steps, activeId }: FlowProps) {
             )}
             <span
               className={cn(
-                "shadow-border text-meta bg-bg mt-0 w-full rounded-md px-3 py-2 text-center transition-[box-shadow,background-color,color] duration-150 ease-out",
+                "shadow-border text-meta bg-bg mt-0 w-full rounded-md px-3 py-2 text-center transition-[box-shadow,background-color,color] duration-(--duration-quick) ease-out",
                 isActive
                   ? "ring-accent text-ink bg-surface font-medium ring-1"
                   : "text-ink-muted",

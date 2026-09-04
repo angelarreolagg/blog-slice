@@ -3,7 +3,7 @@ import { Link } from "react-router";
 type ProseLinkProps = React.ComponentProps<"a">;
 
 const LINK_CLASS =
-  "text-ink decoration-line-strong hover:decoration-ink underline decoration-1 underline-offset-[3px] transition-[text-decoration-color] duration-120 ease-soft";
+  "text-ink decoration-line-strong hover:decoration-ink underline decoration-1 underline-offset-[3px] transition-[text-decoration-color] duration-(--duration-quick) ease-out";
 
 function isExternal(href: string) {
   return /^https?:\/\//.test(href);

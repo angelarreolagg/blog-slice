@@ -11,7 +11,7 @@ export function NotFoundNotice() {
       <p className="mt-8">
         <Link
           to="/"
-          className="text-ink decoration-line-strong hover:decoration-ink ease-soft underline decoration-1 underline-offset-[3px] transition-[text-decoration-color] duration-120"
+          className="text-ink decoration-line-strong hover:decoration-ink underline decoration-1 underline-offset-[3px] transition-[text-decoration-color] duration-(--duration-quick) ease-out"
         >
           Back to all notes
         </Link>
