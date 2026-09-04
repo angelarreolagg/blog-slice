@@ -66,6 +66,12 @@ These cost time when rediscovered:
 - **Motion decides at mount whether an element is a variant root.** Declaring `initial`, `animate` or any `while*` variant label sets `isControllingVariants`, and such an element never registers as a stagger child. The pointer gate resolves after hydration, so `Keyword` is keyed on which path it takes and remounts once.
 - **`whileInView` does not propagate its variant to children.** Use `useInView` and drive `animate` for anything that has to orchestrate a stagger.
 - **Motion applies `initial` during prerender.** An `initial={{ opacity: 0 }}` entrance ships invisible HTML; the article entrance is a CSS animation for that reason.
+- **`cn()` merges a text size and a text colour.** The type scale lives in the `--text-*` namespace, so `text-caption` and `text-ink-faint` both look like `text-*` and one is silently dropped. `src/shared/lib/utils.ts` registers the sizes with `createCn` from `cn/config`; import `cn` from there and never from `"cn"`.
+- **Tailwind ships a static `max-w-prose` (65ch)** that beats the `--container-prose` token. Write `max-w-(--container-prose)` or the column renders ~90px wider than the style document says.
+- **A table-of-contents slugger must match `rehype-slug`.** Instantiate `GithubSlugger` per file and slug every heading in document order, including the ones you filter out, or the duplicate counters drift. `config/headings.ts` does this; the ids keep their accents.
+- **Durations reference tokens with v4's custom-property syntax** — `duration-(--duration-fast)`. There is no `--duration-*` utility namespace, but `--ease-*` and `--blur-*` do generate utilities.
+- **`position: sticky` inside `position: absolute`** needs `inset-y-0` on the absolute box to have a height to stick within, and the sticky child must be shorter than the viewport or it stops sticking partway down.
+- **`line-clamp-*` needs an unpadded box.** Its `display: -webkit-box` loses to any later `display` utility, and vertical padding lets the next line peek through under the clamp.
 - **The icon sprite ships its own palette.** Its fills and strokes are `currentColor` so the footer can tint them with the ink tokens.
 
 ## Assets
@@ -74,4 +80,6 @@ These cost time when rediscovered:
 
 ## Skills
 
-`make-interfaces-feel-better` (`/make-interfaces-feel-better`) is installed in `.agents/skills/`, symlinked from `.claude/skills/`, pinned by `skills-lock.json`. It governs how things move and feel — press scale, enter/exit values, icon swaps, shadows, hit areas — and `STYLEGUIDE.md` §6 is its application here. Read it before touching any motion or surface.
+Three motion skills are installed in `.agents/skills/`, symlinked from `.claude/skills/`. `transitions-dev` and `transitions-polish` own the token scale and therefore **every CSS transition and keyframe** — run `transitions review` before adding motion, and match on _usage_, never on the nearest number. `make-interfaces-feel-better` keeps the cases where it prescribes exact Motion values (the icon swap, the `0.96` press) and remains the authority on surfaces, icons and hit areas. `STYLEGUIDE.md` §6 records the split.
+
+`make-interfaces-feel-better` (`/make-interfaces-feel-better`) governs how things move and feel — press scale, enter/exit values, icon swaps, shadows, hit areas — and `STYLEGUIDE.md` §6 is its application here. Read it before touching any motion or surface.

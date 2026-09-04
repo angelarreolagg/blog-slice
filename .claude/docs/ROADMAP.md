@@ -359,6 +359,31 @@ the review checklist in the style document passes on all four posts.
 
 ---
 
+## Phase 10 — Reading Experience and the Motion Token Scale
+
+`transitions-dev` and `transitions-polish` now own the token scale and every CSS
+transition; `make-interfaces-feel-better` keeps the cases where it prescribes
+exact Motion values. The style document's §6 records the split.
+
+- [x] Install the duration, easing, distance, scale and blur scale; map every
+      ad-hoc value to the token whose usage matches; delete `--ease-soft`
+- [x] Publish `headings` from each post the way frontmatter is published, with
+      slugger parity against `rehype-slug`; compute reading time where
+      `gray-matter` already reads the body
+- [x] Table-of-contents rail that tracks the section being read and travels an
+      accent segment to it; a disclosure below `lg`
+- [x] Meta rail with author, reading time, dates, tags and share links; a block
+      below `xl`
+- [x] Rails float in the margins so the reading column never moves
+- [x] Stagger the index rows; unify every hover in the shell
+- [x] Browser pass: geometry at 320–1536, tracking, sticky, keyboard, tooltips,
+      reduced motion, both themes
+
+**Done when:** an entry tells you where you are, who wrote it and how long it
+takes, and every duration in the project references a token.
+
+---
+
 ## 5. Explicitly Out of Scope for v1
 
 Recorded as decisions, not oversights:

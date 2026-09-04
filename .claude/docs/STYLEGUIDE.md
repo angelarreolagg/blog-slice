@@ -13,7 +13,7 @@ The blog is prose. The document leads; the interface disappears.
 
 Four decisions drive everything else:
 
-1. **One column, narrow.** No sidebar, no reading progress bar, no floating "related posts". Line length is the single most important design element on the page.
+1. **One reading column, and it never moves.** Line length is the single most important design element on the page, so the prose column is a fixed width, centred, identical at every viewport. Rails may float in the margins once there is room for them (§5.17), but they never squeeze the column, never reflow it, and never carry the article itself. No reading progress bar, no floating "related posts".
 2. **Color does not create hierarchy.** Size, weight, and whitespace do. The grays carry the load.
 3. **There is one chromatic accent and it is reserved.** Amber (`--color-accent`) appears only on interactive _keywords_ and on the focus ring. Regular links are NOT colored: they are underlined text. This makes keywords the only thing on the page that "glows", which is exactly the point of the project.
 4. **Two modes, one personality.** Light and dark are the same design with the lightness scale inverted. The light mode isn't warmer and the dark mode isn't more "premium": both are neutral with the same barely-perceptible cool hue.
@@ -242,8 +242,34 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
   --radius-md: 0.5rem; /* button, image, keyword panel */
   --radius-lg: 0.75rem; /* post card, code block */
 
+  /* Motion scale — transitions.dev. Reference these, never a literal. */
+  --duration-stagger: 40ms;
+  --duration-micro: 80ms;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-medium: 350ms;
+  --duration-slow: 400ms;
+  --duration-very-slow: 500ms;
+
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --ease-bounce-strong: cubic-bezier(0.34, 3.85, 0.64, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-  --ease-soft: cubic-bezier(0.45, 0, 0.15, 1);
+
+  --distance-micro: 4px;
+  --distance-small: 6px;
+  --distance-base: 8px;
+  --distance-medium: 12px;
+  --distance-large: 30px;
+
+  --scale-large: 0.96;
+  --scale-medium: 0.97;
+  --scale-small: 0.98;
+  --scale-tiny: 0.99;
+
+  --blur-small: 2px;
+  --blur-medium: 3px;
+  --blur-large: 8px;
 
   --spacing: 0.25rem;
   --breakpoint-sm: 40rem;
@@ -609,13 +635,63 @@ A walkthrough that owns an index: a `Flow` with the active node, a `Paso n de N`
 
 The kit is declared from `.mdx` with data; a post never ships its own components. Its control copy (`Paso 2 de 4`, `Paso siguiente`) is in the prose language, because it reads as part of the article.
 
+### 5.17 Rails (`Toc`, `PostMeta`)
+
+Two columns that live in the page's empty margins beside an entry. They are
+**absolutely positioned siblings of the reading column**, never grid tracks, so
+the prose is centred at exactly the same place whether they are showing or not.
+The table of contents appears from `lg`, the meta rail from `xl`; below those the
+same component renders in flow — the toc as a disclosure under the deck, the meta
+as an "about this entry" block after the prose. One instance each, so there is
+one landmark each.
+
+- Each rail's inner box is `sticky top-24` and capped at
+  `max-h-[calc(100dvh-8rem)]` with its own scroll — a box taller than the
+  viewport stops sticking.
+- **Toc** is a `<nav aria-label>` of `<a href="#id">` built from the post's
+  `headings` export. Entries are `text-caption`, clamped to two lines in an
+  unpadded inner span, `h3` indented. The entry being read goes to `text-ink`
+  and takes `aria-current="location"`; an accent segment travels down the
+  hairline to it, measured from the item and transitioned on
+  `[translate,height]`. This is the only progress indicator the site has, and it
+  is an index first.
+- **PostMeta** is an `<aside aria-label>` carrying the author (monogram
+  `Avatar` + name), reading time, publication and update dates, the tags, and
+  the share row. Tags live here and not in the header, so an entry opens on its
+  title.
+
+### 5.18 Avatar
+
+A monogram disc: up to two initials on `bg-surface` with `shadow-border`,
+`aria-hidden` because the name always sits beside it. No image asset, so nothing
+to load and nothing to theme.
+
+### 5.19 Share row
+
+Copy-link plus one link per platform, each a 32px control with a 44px hit area,
+an `aria-label`, and a CSS tooltip (`.t-tt-wrap` / `.t-tt-trigger` / `.t-tt`,
+the tooltip being the trigger's immediate next sibling). The copy control swaps
+its icon with the contextual-icon values and reports success in its label, not
+only in the icon.
+
 ---
 
 ## 6. Motion
 
-The installed skill `.agents/skills/make-interfaces-feel-better/` (animations.md,
-surfaces.md, icons.md) is the authority on how things move and feel; this section is
-its application to the blog.
+Two installed skills govern motion, and where their numbers disagree the lane
+decides which wins:
+
+- **`.agents/skills/transitions-dev/` + `transitions-polish/`** own the token
+  scale (§3) and therefore **every CSS transition and keyframe**. `transitions
+review` audits against it; a value is wrong when it does not match its _usage_,
+  not when it is off by 20ms. A usage with no matching token is left alone — the
+  keyword reveal is the standing example.
+- **`.agents/skills/make-interfaces-feel-better/`** owns the cases where it
+  prescribes exact values, all of them Motion-driven: the contextual icon swap
+  (`scale .25→1`, `blur 4→0`, spring 300ms bounce 0) and the press scale of
+  `0.96`. It remains the authority on surfaces, icons, hit areas and restraint.
+
+This section is their application to the blog.
 
 Hard rules:
 
@@ -626,24 +702,38 @@ Hard rules:
 5. `prefers-reduced-motion: reduce` is mandatory, and the reduced state shows **the final content** with no delayed chunks.
 6. **No custom animation on high-frequency interactions.** Row hovers and keystrokes get instant feedback or a ≤150ms `opacity` / `background-color` transition.
 
-**Durations:** hover 100–150ms · press 150ms · icon swap 300ms · step panel 200ms in, 150ms out · page-header entrance 400ms with chunks 100ms apart. Nothing else exceeds 300ms.
+**Reference the tokens, never a literal.** Easings generate utilities
+(`ease-smooth-out`); durations use v4's custom-property syntax,
+`duration-(--duration-quick)`. The scale is in §3.
 
-| Moment                  | Property                                                           | Duration               | Easing                                                  |
-| ----------------------- | ------------------------------------------------------------------ | ---------------------- | ------------------------------------------------------- |
-| Link hover              | `text-decoration-color`                                            | 120ms                  | `--ease-soft`                                           |
-| Post row hover          | `background-color`                                                 | 100ms                  | `ease-out`                                              |
-| Surface hover           | `box-shadow` (`shadow-border-hover`)                               | 150ms                  | `ease-out`                                              |
-| Button press            | `scale(0.96)`, CSS transition                                      | 150ms                  | `ease-out`                                              |
-| Contextual icon         | `scale .25→1`, `opacity 0→1`, `blur 4→0`                           | spring 300ms, bounce 0 | Motion; CSS `cubic-bezier(0.2, 0, 0, 1)` when no Motion |
-| Theme indicator         | `translate`, after a click only                                    | 150ms                  | `ease-out`                                              |
-| Page-header entrance    | `opacity`, `translateY 12→0`, `blur 4→0`, once, chunks 100ms apart | 400ms                  | `--ease-out-quart`                                      |
-| Body entrance           | `opacity` 0→1, once, 200ms after the header                        | 240ms                  | `--ease-out-quart`                                      |
-| Step panel              | in: `opacity`, `y 12→0`, `blur`; out: `y → -12`, `blur`            | 200ms / 150ms          | `--ease-out-quart` / `ease-out`                         |
-| Diagram highlight       | `box-shadow`, `background-color`, `color`, `opacity`               | 150ms                  | `ease-out`                                              |
-| Keyword reveal (hover)  | `scaleX` + `opacity`                                               | 180ms                  | `--ease-out-quart`                                      |
-| Keyword stagger (touch) | `scaleX` + `opacity`                                               | 180ms, 120ms apart     | `--ease-out-quart`                                      |
+| Token                  | Value | Usage here                                                  |
+| ---------------------- | ----- | ----------------------------------------------------------- |
+| `--duration-stagger`   | 40ms  | index-row stagger offset                                    |
+| `--duration-micro`     | 80ms  | header-chunk stagger offset, tooltip intent delay           |
+| `--duration-quick`     | 150ms | every hover, press, text swap, step panel                   |
+| `--duration-fast`      | 250ms | tabs and theme indicators, toc marker, icon swap, accordion |
+| `--duration-slow`      | 400ms | body entrance                                               |
+| `--duration-very-slow` | 500ms | page-header entrance                                        |
 
-Page entrances are CSS keyframes on the prerendered markup so the prose is visible before, and without, JavaScript. Split the header into its semantic chunks (date, title, deck, tags) and stagger them; the body is one chunk. Nothing scroll-triggers except the keyword stagger.
+Keep a stagger's **total** (offset × items) under ~300ms. Opens are slower than
+closes; a close is never delayed. Hover-in is direct, hover-out may spring
+(`--ease-bounce-strong`) — the tag row is the only place that does.
+
+| Moment               | Property                                                    | Token                                         |
+| -------------------- | ----------------------------------------------------------- | --------------------------------------------- |
+| Any hover            | `color` / `background-color` / `box-shadow`                 | `--duration-quick`, `ease-out`                |
+| Button press         | `scale(0.96)`                                               | `--duration-quick`, `ease-out`                |
+| Contextual icon      | `scale .25→1`, `opacity 0→1`, `blur 4→0`                    | Motion spring 300ms, bounce 0                 |
+| Sliding indicator    | `translate` (+ `width`) — tabs, theme, toc marker           | `--duration-fast`, `ease-smooth-out`          |
+| Heading anchor       | `opacity`, `scale`, `blur`                                  | `--duration-fast`, `ease-in-out`              |
+| Toc disclosure       | `grid-template-rows 0fr→1fr`, chevron `scaleY(-1)`          | `--duration-fast`, `ease-smooth-out`          |
+| Tooltip              | `opacity` + `scale .98→1`, 80ms intent delay, no delay out  | `--duration-quick` in, 50ms out               |
+| Tag row hover        | `translateY` falloff, springy return                        | 320ms, `--ease-bounce-strong` out             |
+| Page-header entrance | `opacity`, `translateY 12→0`, `blur 3→0`, chunks 80ms apart | `--duration-very-slow`, `ease-in-out`         |
+| Body entrance        | `opacity` 0→1, once, 240ms after the header                 | `--duration-slow`, `ease-in-out`              |
+| Index rows           | same as the header, chunks 40ms apart                       | `--duration-very-slow`, `ease-in-out`         |
+| Step panel           | `opacity`, `y ±4`, `blur 2→0` — a text swap, symmetric      | `--duration-quick`, `ease-in-out`             |
+| Keyword reveal       | `scaleX` + `opacity`                                        | 180ms, `--ease-out-quart` (no matching token) |
 
 **Theme switching is not animated.** A full-page crossfade is expensive and produces an intermediate gray flash.
 
@@ -761,6 +851,9 @@ does not land. The rest does not count.
 - [ ] `bg-linear-to-*`, not `bg-gradient-to-*`.
 - [ ] Variants are literal unions, no `enum`.
 - [ ] Motion animates only `opacity`, `transform` and — for icon swaps and step panels — `filter`.
+- [ ] Every duration and easing references a motion token; `transitions review` is clean.
+- [ ] The prose column sits at the same place with the rails showing and hidden.
+- [ ] A `text-<size>` and a `text-<colour>` never reach `cn()` together unmerged (see the gotcha).
 - [ ] Interactive states are CSS transitions with named properties; keyframes only run once.
 - [ ] Press scale is exactly `0.96`; nested radii are concentric; raised surfaces use `shadow-border`, not a border.
 - [ ] No Motion element carries a Tailwind `transition-*` on the same property.
