@@ -12,7 +12,12 @@ export function useCopy(): {
   useEffect(() => () => clearTimeout(timeout.current), []);
 
   const copy = useCallback(async (text: string) => {
-    await navigator.clipboard.writeText(text);
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Denied or insecure context: the label simply never reports success.
+      return;
+    }
     setIsCopied(true);
     clearTimeout(timeout.current);
     timeout.current = setTimeout(() => setIsCopied(false), FEEDBACK_MS);

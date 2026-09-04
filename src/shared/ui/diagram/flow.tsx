@@ -21,7 +21,8 @@ export function Flow({ label, steps, activeId }: FlowProps) {
           <li
             key={step.id}
             aria-current={isActive ? "step" : undefined}
-            className="flex min-w-0 flex-1 flex-col items-center gap-2 sm:flex-row"
+            // The prose rhythm targets list items; this list is a diagram.
+            className="mt-0 flex min-w-0 flex-1 flex-col items-center gap-2 sm:flex-row"
           >
             {index > 0 && (
               <ArrowRight
@@ -32,7 +33,7 @@ export function Flow({ label, steps, activeId }: FlowProps) {
             )}
             <span
               className={cn(
-                "shadow-border text-meta bg-bg w-full rounded-md px-3 py-2 text-center transition-[box-shadow,background-color,color] duration-150 ease-out",
+                "shadow-border text-meta bg-bg mt-0 w-full rounded-md px-3 py-2 text-center transition-[box-shadow,background-color,color] duration-150 ease-out",
                 isActive
                   ? "ring-accent text-ink bg-surface font-medium ring-1"
                   : "text-ink-muted",

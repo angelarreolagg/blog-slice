@@ -345,13 +345,13 @@ feels unique by composing a shared, data-driven kit from `.mdx` — no per-post 
       post; the body follows as one chunk; reduced motion zeroes delays too
 - [x] Style the highlighter output the pipeline already emits: `title="…"` bars and
       highlighted lines
-- [ ] Kit: `Callout`, `Compare` (Base UI Tabs), `Flow`, `Layers`, `Steps`, registered
+- [x] Kit: `Callout`, `Compare` (Base UI Tabs), `Flow`, `Layers`, `Steps`, registered
       in the MDX map with contract tests; the accent marks a diagram's active element
-- [ ] Write "React Native y Expo: el entorno de EAS y cómo funcionan las
+- [x] Write "React Native y Expo: el entorno de EAS y cómo funcionan las
       actualizaciones OTA" for complete newcomers, exercising every kit element
-- [ ] Retrofit the three existing posts with at least one kit element each and delete
+- [x] Retrofit the three existing posts with at least one kit element each and delete
       the `<img>`-loaded diagram they no longer need
-- [ ] Browser pass: every state at 10% speed, both themes, 320/390/1280, keyboard
+- [x] Browser pass: every state at 10% speed, both themes, 320/390/1280, keyboard
       through `Layers` → `Compare` → `Steps`, reduced motion, no hydration errors
 
 **Done when:** every post uses the kit, the shell follows the skill's numbers, and

@@ -70,7 +70,7 @@ These cost time when rediscovered:
 
 ## Assets
 
-`public/icons.svg` is a sprite of `<symbol>` elements: `bluesky-icon`, `discord-icon`, `documentation-icon`, `github-icon`, `social-icon`, `x-icon`. Use `<svg><use href="/icons.svg#github-icon" /></svg>`, or the `SpriteIcon` primitive. Everything else comes from Lucide. `public/test-categories.svg` is an authored diagram and carries its own `prefers-color-scheme` styles, since an SVG loaded through `<img>` cannot read the page's tokens.
+`public/icons.svg` is a sprite of `<symbol>` elements: `bluesky-icon`, `discord-icon`, `documentation-icon`, `github-icon`, `social-icon`, `x-icon`. Use `<svg><use href="/icons.svg#github-icon" /></svg>`, or the `SpriteIcon` primitive. Everything else comes from Lucide. Diagrams are not images: they are the kit (`Flow`, `Layers`, `Steps`, `Compare`, `Callout`) declared from `.mdx`, so they follow the theme toggle and the tokens.
 
 ## Skills
 

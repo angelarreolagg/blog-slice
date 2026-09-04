@@ -29,22 +29,31 @@ export function Layers({ label, items }: LayersProps) {
             aria-pressed={isActive}
             onClick={() => handleToggle(item.id)}
             className={cn(
-              "shadow-border hover:shadow-border-hover focus-visible:outline-accent bg-bg flex min-h-11 w-full cursor-pointer flex-col items-start gap-0.5 rounded-md px-3 py-2 text-left transition-[box-shadow,background-color,color,opacity] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2",
+              "shadow-border hover:shadow-border-hover focus-visible:outline-accent bg-bg flex min-h-11 w-full cursor-pointer flex-col items-start gap-0.5 rounded-md px-3 py-2 text-left transition-[box-shadow,background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2",
               isActive && "ring-accent bg-surface ring-1",
               isReached && "bg-surface",
-              isDimmed && "opacity-60",
+              // Receding bands lose elevation, not legibility: no opacity here.
+              isDimmed && "shadow-none hover:shadow-none",
             )}
           >
             <span
               className={cn(
-                "text-meta font-medium",
+                "text-meta font-medium transition-[color] duration-150 ease-out",
                 isActive || isReached ? "text-ink" : "text-ink-muted",
+                isDimmed && "text-ink-faint",
               )}
             >
               {item.label}
             </span>
             {item.note && (
-              <span className="text-caption text-ink-muted">{item.note}</span>
+              <span
+                className={cn(
+                  "text-caption text-ink-muted transition-[color] duration-150 ease-out",
+                  isDimmed && "text-ink-faint",
+                )}
+              >
+                {item.note}
+              </span>
             )}
           </button>
         );

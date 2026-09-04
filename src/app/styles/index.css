@@ -231,8 +231,12 @@
     text-wrap: pretty;
   }
 
-  .prose :where(p, ul, ol, figure, pre, blockquote, table) + * {
+  /* Rhythm is between top-level blocks, whatever element the block is. */
+  .prose > * + * {
     margin-top: 1.25em;
+  }
+  .prose :where(li, blockquote, [role="tabpanel"]) > * + * {
+    margin-top: 1em;
   }
   .prose :where(h2) {
     margin-top: 2.75rem;
@@ -251,6 +255,9 @@
   }
   .prose :where(hr) {
     margin-block: 3rem;
+  }
+  .prose > :where(h2, h3, h4, hr) + * {
+    margin-top: 0;
   }
   .prose :where(li) + li {
     margin-top: 0.5em;

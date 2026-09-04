@@ -601,7 +601,7 @@ A linear diagram: `<ol aria-label>` of nodes with one arrow between each pair. H
 
 ### 5.15 Layers
 
-Stacked bands, one per item, in a `role="group" aria-label`. Each band is a real `<button type="button" aria-pressed>` toggle at least `min-h-11` tall; hover highlights on fine pointers, a tap sets state on touch. The active band is `ring-1 ring-accent bg-surface text-ink`; bands the active one `reaches` get `bg-surface`; the rest drop to `opacity-60` and must still clear 4.5:1. Every state change is a CSS transition ≤150ms.
+Stacked bands, one per item, in a `role="group" aria-label`. Each band is a real `<button type="button" aria-pressed>` toggle at least `min-h-11` tall; hover highlights on fine pointers, a tap sets state on touch. The active band is `ring-1 ring-accent bg-surface text-ink`; bands the active one `reaches` get `bg-surface`; the rest recede by losing their shadow and dropping to `ink-faint` — never by opacity, which takes a light-mode label under 4.5:1. Every state change is a CSS transition ≤150ms.
 
 ### 5.16 Steps
 
