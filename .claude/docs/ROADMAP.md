@@ -383,6 +383,9 @@ exact Motion values. The style document's §6 records the split.
 - [x] `Selected`: one design term per entry, framed the way a design tool frames
       a selected layer, with its really measured box on hover
 
+- [x] `AnimatedTitle`: an optional per-entry title entrance, opened with the
+      `matrix` LED-panel style
+
 **Done when:** an entry tells you where you are, who wrote it and how long it
 takes, and every duration in the project references a token.
 

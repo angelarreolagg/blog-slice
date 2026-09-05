@@ -1,4 +1,5 @@
 import { useParams } from "react-router";
+import { AnimatedTitle } from "@/features/animated-title";
 import { TableOfContents } from "@/features/table-of-contents";
 import { formatPostDate, getPost } from "@/entities/post";
 import { NotFoundNotice } from "@/widgets/not-found-notice";
@@ -23,7 +24,11 @@ export function PostDetailPage() {
             </time>
             {`, ${post.readingMinutes} min de lectura`}
           </p>
-          <h1 className="text-ink text-h1 mt-4 text-balance">{post.title}</h1>
+          <AnimatedTitle
+            title={post.title}
+            style={post.titleStyle}
+            className="text-ink text-h1 mt-4 text-balance"
+          />
           <p className="text-ink-muted text-lead mt-4 text-balance">
             {post.description}
           </p>

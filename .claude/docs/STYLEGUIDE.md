@@ -717,6 +717,37 @@ Rules:
 - The word itself stays `text-ink` in both states, so it is never the frame that
   makes it readable.
 
+### 5.21 Title entrance (optional, per entry)
+
+Most entries use the plain `h1`. An entry may opt into a named entrance with
+`titleStyle` in its frontmatter; the styles are a literal union, and adding one
+means a new case in `AnimatedTitle` and a new section here.
+
+| `titleStyle`      | Entrance                                        |
+| ----------------- | ----------------------------------------------- |
+| `plain` (default) | The header's own staggered chunk. Nothing else. |
+| `matrix`          | An LED panel resolving, below.                  |
+
+**`matrix`** renders the title as if it were on a dot-matrix display seen close
+up. Each word carries a grid of background-coloured dots punched over its
+glyphs, so only the lit text is pixelated and the page around it is untouched —
+in dark mode the panel also glows, in light mode the same grid reads as a
+halftone. The title resolves out of a blur, character by character, left to
+right.
+
+Rules:
+
+- The grid belongs to the **word**, never the character: it stays continuous
+  across letters instead of restarting at each glyph, and an inline character
+  loses its `::after` at a line break.
+- The scan is **bounded, not per-character**: each glyph's delay is
+  `--i / --n * --duration-fast`, so a title of any length resolves in the same
+  250ms. It replaces the header's chunk animation rather than stacking with it.
+- The heading carries the plain title in an `sr-only` span and the split copy
+  `aria-hidden`, so the accessible name is the title exactly once.
+- Under reduced motion every glyph is present immediately and the dot texture
+  stays — the pixelation is the style, not the motion.
+
 ---
 
 ## 6. Motion

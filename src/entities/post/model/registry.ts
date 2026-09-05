@@ -17,6 +17,7 @@ function toSummary({ slug, readingMinutes, module }: PostEntry): PostSummary {
     date: frontmatter.date,
     updated: frontmatter.updated,
     author: frontmatter.author,
+    titleStyle: frontmatter.titleStyle ?? "plain",
     tags: frontmatter.tags ?? [],
     readingMinutes,
   };

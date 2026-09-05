@@ -1,5 +1,9 @@
 import type { MDXProps } from "mdx/types";
 
+// The entrance a post's title uses. Adding one means a new case in
+// `AnimatedTitle`; posts that name none get the plain title.
+export type TitleStyle = "plain" | "matrix";
+
 export type PostHeading = {
   depth: number;
   id: string;
@@ -12,6 +16,7 @@ export type PostFrontmatter = {
   date: string;
   updated?: string;
   author?: string;
+  titleStyle?: TitleStyle;
   tags?: Array<string>;
   draft?: boolean;
 };
@@ -29,6 +34,7 @@ export type PostSummary = {
   date: string;
   updated?: string;
   author?: string;
+  titleStyle: TitleStyle;
   tags: Array<string>;
   readingMinutes: number;
 };

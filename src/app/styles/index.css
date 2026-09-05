@@ -222,6 +222,20 @@
     }
   }
 
+  --animate-matrix-char: matrix-char var(--duration-slow) var(--ease-out-quart)
+    both;
+
+  @keyframes matrix-char {
+    from {
+      opacity: 0;
+      filter: blur(0.14em);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
   @keyframes stagger-enter {
     from {
       opacity: 0;
@@ -445,6 +459,47 @@
   }
   .prose > :first-child {
     margin-top: 0;
+  }
+
+  /* An LED panel seen close up: background-coloured dots punched over each
+     glyph, so only the lit text is pixelated and the page around it is not. */
+  .matrix-char,
+  .matrix-word::after {
+    animation: var(--animate-matrix-char);
+    animation-delay: calc(
+      var(--duration-micro) + var(--i) / var(--n) * var(--duration-fast)
+    );
+  }
+  /* The grid belongs to the word, not the glyph: it stays continuous across
+     letters, and an inline character loses its ::after at a line break. */
+  .matrix-word {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .matrix-word::after {
+    content: "";
+    position: absolute;
+    inset: -0.05em -0.02em;
+    background-image: radial-gradient(
+      circle,
+      var(--color-bg) 0.018em,
+      transparent 0.022em
+    );
+    background-size: 0.075em 0.075em;
+    pointer-events: none;
+  }
+  /* Only a dark panel can glow; in light mode the dots read as a halftone. */
+  :root[data-theme="dark"] .matrix-title,
+  :root:not([data-theme="light"]) .matrix-title {
+    @media (prefers-color-scheme: dark) {
+      text-shadow: 0 0 0.5em
+        color-mix(in oklab, var(--color-ink) 35%, transparent);
+    }
+  }
+  [data-theme="dark"] .matrix-title {
+    text-shadow: 0 0 0.5em
+      color-mix(in oklab, var(--color-ink) 35%, transparent);
   }
 
   /* One-shot page-header entrance: semantic chunks, 100ms apart. */

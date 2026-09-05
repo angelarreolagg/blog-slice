@@ -6,5 +6,6 @@ export type {
   PostFrontmatter,
   PostModule,
   PostSummary,
+  TitleStyle,
 } from "./model/types";
 export { PostCard } from "./ui/post-card";
