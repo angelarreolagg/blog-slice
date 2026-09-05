@@ -7,6 +7,15 @@ import { mockMatchMedia } from "./match-media";
 mockMatchMedia();
 
 vi.stubGlobal(
+  "ResizeObserver",
+  class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  },
+);
+
+vi.stubGlobal(
   "IntersectionObserver",
   class {
     observe() {}

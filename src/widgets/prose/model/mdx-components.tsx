@@ -1,6 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import { AnimatedParagraph, Keyword } from "@/features/keyword-reveal";
 import { Layers } from "@/features/layer-highlight";
+import { Selected } from "@/features/selected-word";
 import { Steps } from "@/features/step-walkthrough";
 import { Flow } from "@/shared/ui/diagram/flow";
 import { Callout } from "@/shared/ui/prose/callout";
@@ -51,5 +52,6 @@ export const mdxComponents: MDXComponents = {
   CompareItem,
   Flow,
   Layers,
+  Selected,
   Steps,
 };

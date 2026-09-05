@@ -15,7 +15,10 @@ Four decisions drive everything else:
 
 1. **One reading column, and it never moves.** Line length is the single most important design element on the page, so the prose column is a fixed width, centred, identical at every viewport. Rails may float in the margins once there is room for them (§5.17), but they never squeeze the column, never reflow it, and never carry the article itself. No reading progress bar, no floating "related posts".
 2. **Color does not create hierarchy.** Size, weight, and whitespace do. The grays carry the load.
-3. **There is one chromatic accent and it is reserved.** Amber (`--color-accent`) appears only on interactive _keywords_ and on the focus ring. Regular links are NOT colored: they are underlined text. This makes keywords the only thing on the page that "glows", which is exactly the point of the project.
+3. **There is one chromatic accent and it is reserved.** Amber (`--color-accent`) appears only on interactive _keywords_, on the focus ring, and on the active element of a diagram. Regular links are NOT colored: they are underlined text. This makes keywords the only thing on the page that "glows", which is exactly the point of the project.
+
+   **Quotations are the exception, and there are exactly two.** A quotation borrows another environment's colours because that environment is what the reader is being shown: the four `--color-code-*` tokens quote a syntax highlighter, and `--color-select` quotes a design tool's selection (§5.20). Neither is a brand colour, neither may be reused for anything else, and no third quotation is added without amending this list.
+
 4. **Two modes, one personality.** Light and dark are the same design with the lightness scale inverted. The light mode isn't warmer and the dark mode isn't more "premium": both are neutral with the same barely-perceptible cool hue.
 
 Analogy: a well-printed book. Paper is paper, ink is ink, and the only pencil underline is the one you drew because that word mattered.
@@ -127,6 +130,10 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
   --p-accent: oklch(0.58 0.12 70);
   --p-accent-dim: oklch(0.74 0.08 70);
 
+  /* Quotation: a design tool's selection. See §1.3 and §5.20. */
+  --p-select: oklch(0.6 0.17 250);
+  --p-select-fill: oklch(0.6 0.17 250 / 0.12);
+
   --p-code-comment: oklch(0.58 0.01 260);
   --p-code-string: oklch(0.48 0.09 150);
   --p-code-keyword: oklch(0.48 0.13 300);
@@ -161,6 +168,9 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
     --p-accent: oklch(0.84 0.07 85);
     --p-accent-dim: oklch(0.66 0.055 85);
 
+    --p-select: oklch(0.72 0.15 250);
+    --p-select-fill: oklch(0.72 0.15 250 / 0.16);
+
     --p-code-comment: oklch(0.55 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
     --p-code-keyword: oklch(0.78 0.07 300);
@@ -194,6 +204,9 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
 
   --color-accent: var(--p-accent);
   --color-accent-dim: var(--p-accent-dim);
+
+  --color-select: var(--p-select);
+  --color-select-fill: var(--p-select-fill);
 
   --color-code-comment: var(--p-code-comment);
   --color-code-string: var(--p-code-string);
@@ -324,6 +337,7 @@ tinted neutral, which reads as dirt on the edge.
 | `ink-muted` | Deck, card description, inactive nav                 | Prose body                                   |
 | `ink-faint` | Date, tag, image caption                             | Any text that has to be read carefully       |
 | `accent`    | Keyword, focus ring, the active element of a diagram | Links, buttons, headings, decorative borders |
+| `select`    | The selection frame, handles and fill of §5.20       | Anything else at all — it is a quotation     |
 | `line`      | Hairlines, card border at rest                       | Separating paragraphs                        |
 
 Check contrast with a real tool before moving any `L` value: OKLCH lightness is not WCAG relative luminance. Floor: **4.5:1** for text under 24px, **in both modes**.
@@ -675,6 +689,33 @@ an `aria-label`, and a CSS tooltip (`.t-tt-wrap` / `.t-tt-trigger` / `.t-tt`,
 the tooltip being the trigger's immediate next sibling). The copy control swaps
 its icon with the contextual-icon values and reports success in its label, not
 only in the icon.
+
+### 5.20 Selected — a design term, quoted
+
+When an entry talks about visual design or UI, **one** word — in a section
+heading or in the paragraph that matters most — is shown the way a design tool
+shows a selected layer.
+
+**At rest** the word carries a 1px `select` frame with a small square handle at
+each corner, filled with `bg` so they read as cut-outs. **On hover** the frame
+fills with `select-fill`, a dot appears above the top edge, and a badge fades in
+carrying the word's **really measured** box (`61 × 20`), remeasured by a
+`ResizeObserver` when the window or the font changes. The badge is absent from
+prerendered markup and appears once measured; it is never mono, because mono is
+only for code.
+
+Rules:
+
+- **One per entry, and never more.** Two selection frames in one article stop
+  quoting a tool and start looking like a bug.
+- Keep it mid-sentence. The badge is centred above the word and floats over the
+  line before it, so a word that opens a line would push the badge toward the
+  column edge.
+- Decorative like the keyword: a `<span>` with no `role`, no `tabIndex` and no
+  cursor change, with every part of the frame `aria-hidden`. A screen reader
+  hears ordinary prose.
+- The word itself stays `text-ink` in both states, so it is never the frame that
+  makes it readable.
 
 ---
 

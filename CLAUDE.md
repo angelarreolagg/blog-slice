@@ -60,7 +60,7 @@ These cost time when rediscovered:
 - **Vendored primitives arrive with their own palette.** Their vocabulary is aliased onto the project palette in the Tailwind entry; never maintain a second set of tokens.
 - **Shiki must not reach the client bundle.** Highlighting is build-time only — verify no `shiki` chunk ships.
 - **Import Lucide icons individually**, never as a namespace import.
-- **jsdom implements no `matchMedia` and no `IntersectionObserver`.** The test setup stubs both; components reading pointer or motion preferences throw without them.
+- **jsdom implements no `matchMedia`, `IntersectionObserver` or `ResizeObserver`.** The test setup stubs all three; components reading pointer or motion preferences, tracking a heading, or measuring themselves throw without them.
 - **An eager `import.meta.glob` leaks drafts into the bundle.** Its keys are emitted as string literals, so the draft slug and its prose ship even when filtered at runtime. The registry reads `virtual:published-posts` instead, built from published files only.
 - **JSX at the start of a line in `.mdx` becomes a block.** A `<Keyword>` that opens a line splits the paragraph in two. Keep it mid-line; Prettier will otherwise surround it with blank lines and make it permanent.
 - **Motion decides at mount whether an element is a variant root.** Declaring `initial`, `animate` or any `while*` variant label sets `isControllingVariants`, and such an element never registers as a stagger child. The pointer gate resolves after hydration, so `Keyword` is keyed on which path it takes and remounts once.

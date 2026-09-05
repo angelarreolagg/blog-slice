@@ -19,6 +19,9 @@
   --p-accent: oklch(0.54 0.12 70);
   --p-accent-dim: oklch(0.74 0.08 70);
 
+  --p-select: oklch(0.6 0.17 250);
+  --p-select-fill: oklch(0.6 0.17 250 / 0.12);
+
   --p-code-comment: oklch(0.535 0.01 260);
   --p-code-string: oklch(0.48 0.09 150);
   --p-code-keyword: oklch(0.48 0.13 300);
@@ -52,6 +55,10 @@
     --p-accent: oklch(0.84 0.07 85);
     --p-accent-dim: oklch(0.66 0.055 85);
 
+    --p-select: oklch(0.72 0.15 250);
+
+    --p-select-fill: oklch(0.72 0.15 250 / 0.16);
+
     --p-code-comment: oklch(0.62 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
     --p-code-keyword: oklch(0.78 0.07 300);
@@ -81,6 +88,10 @@
   --p-accent: oklch(0.84 0.07 85);
   --p-accent-dim: oklch(0.66 0.055 85);
 
+  --p-select: oklch(0.72 0.15 250);
+
+  --p-select-fill: oklch(0.72 0.15 250 / 0.16);
+
   --p-code-comment: oklch(0.62 0.01 260);
   --p-code-string: oklch(0.8 0.06 150);
   --p-code-keyword: oklch(0.78 0.07 300);
@@ -106,6 +117,9 @@
 
   --color-accent: var(--p-accent);
   --color-accent-dim: var(--p-accent-dim);
+
+  --color-select: var(--p-select);
+  --color-select-fill: var(--p-select-fill);
 
   --color-code-comment: var(--p-code-comment);
   --color-code-string: var(--p-code-string);

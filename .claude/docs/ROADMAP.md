@@ -379,6 +379,10 @@ exact Motion values. The style document's §6 records the split.
 - [x] Browser pass: geometry at 320–1536, tracking, sticky, keyboard, tooltips,
       reduced motion, both themes
 
+- [x] Vendor the author's GitHub picture rather than hotlinking it
+- [x] `Selected`: one design term per entry, framed the way a design tool frames
+      a selected layer, with its really measured box on hover
+
 **Done when:** an entry tells you where you are, who wrote it and how long it
 takes, and every duration in the project references a token.
 
