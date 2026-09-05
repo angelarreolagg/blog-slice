@@ -1,5 +1,7 @@
 import { cn } from "@/shared/lib/utils";
 
+const SOURCE_SIZE = 160;
+
 function initialsOf(name: string) {
   return name
     .split(/\s+/u)
@@ -11,10 +13,28 @@ function initialsOf(name: string) {
 
 type AvatarProps = {
   name: string;
+  src?: string;
   className?: string;
 };
 
-export function Avatar({ name, className }: AvatarProps) {
+export function Avatar({ name, src, className }: AvatarProps) {
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt=""
+        width={SOURCE_SIZE}
+        height={SOURCE_SIZE}
+        loading="lazy"
+        decoding="async"
+        className={cn(
+          "outline-image-edge size-8 shrink-0 rounded-full object-cover outline -outline-offset-1",
+          className,
+        )}
+      />
+    );
+  }
+
   return (
     <span
       aria-hidden

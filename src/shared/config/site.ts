@@ -5,6 +5,8 @@ export const SITE = {
     "Apuntes sobre arquitectura, pruebas y diseño de componentes en aplicaciones de React.",
   url: "https://blog-demo.vercel.app",
   author: "Ángel Arreola",
+  // Vendored from the GitHub profile; refresh with `pnpm avatar`.
+  authorAvatar: "/author.jpg",
   language: "es",
 } as const;
 

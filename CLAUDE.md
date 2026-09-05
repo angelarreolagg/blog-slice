@@ -76,6 +76,8 @@ These cost time when rediscovered:
 
 ## Assets
 
+`public/author.jpg` is the author's GitHub avatar, **vendored, not hotlinked** — a prerendered page must not need a third party to render, and a remote avatar would report every reader to GitHub. Refresh it with `pnpm avatar` (`config/fetch-avatar.ts`), which is never part of `pnpm build`, so a build stays offline-safe.
+
 `public/icons.svg` is a sprite of `<symbol>` elements: `bluesky-icon`, `discord-icon`, `documentation-icon`, `github-icon`, `social-icon`, `x-icon`. Use `<svg><use href="/icons.svg#github-icon" /></svg>`, or the `SpriteIcon` primitive. Everything else comes from Lucide. Diagrams are not images: they are the kit (`Flow`, `Layers`, `Steps`, `Compare`, `Callout`) declared from `.mdx`, so they follow the theme toggle and the tokens.
 
 ## Skills

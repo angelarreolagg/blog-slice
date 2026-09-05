@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "avatar": "node config/fetch-avatar.ts",
     "typecheck": "react-router typegen && tsc -b",
     "test": "vitest",
     "test:run": "vitest run",

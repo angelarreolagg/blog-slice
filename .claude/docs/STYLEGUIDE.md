@@ -662,9 +662,11 @@ one landmark each.
 
 ### 5.18 Avatar
 
-A monogram disc: up to two initials on `bg-surface` with `shadow-border`,
-`aria-hidden` because the name always sits beside it. No image asset, so nothing
-to load and nothing to theme.
+A 32px disc carrying the author's picture (`SITE.authorAvatar`, vendored into
+`public/`) with `alt=""` and the neutral `image-edge` outline, since the name
+always sits beside it. Without a picture it falls back to a monogram of up to
+two initials on `bg-surface` with `shadow-border` — which is what a guest author
+gets, rather than someone else's face.
 
 ### 5.19 Share row
 

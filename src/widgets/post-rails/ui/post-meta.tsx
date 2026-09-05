@@ -11,6 +11,8 @@ type PostMetaProps = {
 
 export function PostMeta({ post }: PostMetaProps) {
   const author = post.author ?? SITE.author;
+  // A guest author gets the monogram rather than someone else's face.
+  const avatar = author === SITE.author ? SITE.authorAvatar : undefined;
   const tagRow = useHoverFalloff();
 
   return (
@@ -20,7 +22,7 @@ export function PostMeta({ post }: PostMetaProps) {
     >
       <div className="flex flex-col gap-6 xl:sticky xl:top-24 xl:w-48">
         <div className="flex items-center gap-3">
-          <Avatar name={author} />
+          <Avatar name={author} src={avatar} />
           <div className="min-w-0">
             <p className="text-meta text-ink font-medium">{author}</p>
             <p className="text-caption text-ink-faint tabular-nums">
