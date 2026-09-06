@@ -239,31 +239,31 @@
 
   /* The glyph is unlit while the bar is over it, then resolves to ink as the
      bar fades. The same two keyframes invert correctly in both themes. */
+  /* The cell is pure light while it is lit, and the glyph is written by it as
+     it leaves. Element opacity cannot express that — it would fade the block
+     and the glyph together — so the two layers carry their own colour. */
   @keyframes matrix-char {
     0% {
-      opacity: 0;
-      color: var(--color-bg);
+      color: transparent;
       background-color: transparent;
-      filter: blur(0.14em);
+      filter: blur(0.18em);
     }
-    10% {
-      opacity: 1;
-      color: var(--color-bg);
+    14% {
+      color: transparent;
       background-color: var(--color-scan-hot);
-      filter: blur(0.06em);
+      filter: blur(0.09em);
     }
-    45% {
-      color: var(--color-bg);
+    46% {
+      color: transparent;
       background-color: var(--color-scan);
-      filter: blur(0.01em);
+      filter: blur(0.05em);
     }
-    70% {
+    78% {
       color: var(--color-ink);
       background-color: transparent;
       filter: blur(0);
     }
     100% {
-      opacity: 1;
       color: var(--color-ink);
       background-color: transparent;
       filter: blur(0);
