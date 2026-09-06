@@ -42,7 +42,7 @@ Git hooks are active: `pre-commit` runs lint-staged, `commit-msg` runs commitlin
 
 `reactRouter()` replaces `@vitejs/plugin-react` in `vite.config.ts` — running both double-transforms JSX and breaks Fast Refresh. `@vitejs/plugin-react` stays installed because `vitest.config.ts` uses it; tests do not run the framework plugin.
 
-**Content model.** Frontmatter is the single source of truth (`title`, `description`, `date`, optional `updated`, `tags`, `draft`). The slug is always the filename, so the URL and the file can never disagree. `config/posts.ts` reads the directory with `gray-matter` and is the one source for both the prerender paths and the `virtual:published-posts` module the registry imports, which is how a draft stays out of the build output entirely.
+**Content model.** Frontmatter is the single source of truth (`title`, `description`, `date`, optional `updated`, `tags`, `draft`, `titleStyle`, `titleTones`). The slug is always the filename, so the URL and the file can never disagree. `config/posts.ts` reads the directory with `gray-matter` and is the one source for both the prerender paths and the `virtual:published-posts` module the registry imports, which is how a draft stays out of the build output entirely.
 
 **Build-time code lives in `config/`.** `vite.config.ts` and `react-router.config.ts` stay thin; the MDX plugin, the four-token highlight theme, post discovery and the feed writers live beside them in `config/`, covered by `tsconfig.node.json`.
 

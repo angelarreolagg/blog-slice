@@ -17,7 +17,7 @@ Four decisions drive everything else:
 2. **Color does not create hierarchy.** Size, weight, and whitespace do. The grays carry the load.
 3. **There is one chromatic accent and it is reserved.** Amber (`--color-accent`) appears only on interactive _keywords_, on the focus ring, and on the active element of a diagram. Regular links are NOT colored: they are underlined text. This makes keywords the only thing on the page that "glows", which is exactly the point of the project.
 
-   **Quotations are the exception, and there are exactly three.** A quotation borrows another environment's colours because that environment is what the reader is being shown: the four `--color-code-*` tokens quote a syntax highlighter, `--color-select` quotes a design tool's selection (§5.20), and `--color-scan` quotes a game HUD's score popup (§5.21). None is a brand colour, none may be reused outside the section that owns it, and no fourth quotation is added without amending this list.
+   **Quotations are the exception, and there are exactly four.** A quotation borrows another environment's colours because that environment is what the reader is being shown: the four `--color-code-*` tokens quote a syntax highlighter, `--color-select` quotes a design tool's selection (§5.20), `--color-scan` quotes a game HUD's score popup and `--color-valo-*` a game's match-found card (both §5.21) — the card quotes the mechanics and an entry may retone it, so its tokens are defaults. None is a brand colour, none may be reused outside the section that owns it, and no fifth quotation is added without amending this list.
 
 4. **Two modes, one personality.** Light and dark are the same design with the lightness scale inverted. The light mode isn't warmer and the dark mode isn't more "premium": both are neutral with the same barely-perceptible cool hue.
 
@@ -140,6 +140,11 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
   --p-scan-settled: var(--p-ink);
   --p-scan-glow: transparent;
 
+  /* Quotation: a game's match-found card, defaults only. See §1.3 and §5.21. */
+  --p-valo-primary: oklch(0.417 0.245 269); /* #2323ce */
+  --p-valo-secondary: oklch(0.89 0.192 155.4); /* #50ffa2 */
+  --p-valo-text: var(--p-ink);
+
   --p-code-comment: oklch(0.58 0.01 260);
   --p-code-string: oklch(0.48 0.09 150);
   --p-code-keyword: oklch(0.48 0.13 300);
@@ -182,6 +187,10 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
     --p-scan-settled: var(--p-scan-hot);
     --p-scan-glow: oklch(0.594 0.165 253.3); /* #247fdd */
 
+    --p-valo-primary: oklch(0.417 0.245 269);
+    --p-valo-secondary: oklch(0.89 0.192 155.4);
+    --p-valo-text: oklch(1 0 0);
+
     --p-code-comment: oklch(0.55 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
     --p-code-keyword: oklch(0.78 0.07 300);
@@ -223,6 +232,10 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
   --color-scan-hot: var(--p-scan-hot);
   --color-scan-settled: var(--p-scan-settled);
   --color-scan-glow: var(--p-scan-glow);
+
+  --color-valo-primary: var(--p-valo-primary);
+  --color-valo-secondary: var(--p-valo-secondary);
+  --color-valo-text: var(--p-valo-text);
 
   --color-code-comment: var(--p-code-comment);
   --color-code-string: var(--p-code-string);
@@ -355,6 +368,7 @@ tinted neutral, which reads as dirt on the edge.
 | `accent`    | Keyword, focus ring, the active element of a diagram                       | Links, buttons, headings, decorative borders |
 | `select`    | The selection frame, handles and fill of §5.20                             | Anything else at all — it is a quotation     |
 | `scan`      | The sweeping bar of the `matrix` entrance, and the glyphs it leaves, §5.21 | Anything else at all — it is a quotation     |
+| `valo`      | The defaults of the `valo` entrance's panels, static and title, §5.21      | Anything else at all — it is a quotation     |
 | `line`      | Hairlines, card border at rest                                             | Separating paragraphs                        |
 
 Check contrast with a real tool before moving any `L` value: OKLCH lightness is not WCAG relative luminance. Floor: **4.5:1** for text under 24px, **in both modes**.
@@ -744,6 +758,7 @@ means a new case in `AnimatedTitle` and a new section here.
 | ----------------- | ----------------------------------------------- |
 | `plain` (default) | The header's own staggered chunk. Nothing else. |
 | `matrix`          | An LED panel resolving, below.                  |
+| `valo`            | A match-found card pulling apart, below.        |
 
 **`matrix`** quotes a game HUD's score popup. The title sits on a dot-matrix
 display seen close up: each word carries a grid of background-coloured dots
@@ -816,6 +831,69 @@ Rules:
   legible through it.
 - Under reduced motion every glyph is present immediately and the dot texture
   stays — the pixelation is the style, not the motion.
+
+**`valo`** quotes a game's match-found card. Two panels grow in from the title's
+edges, close over it, and pull back to uncover it; while they are closed, boxes
+of static cut in and out over them. The title is left in its own tone under a
+soft halo, the second place after `matrix` where a heading is not `ink`.
+
+| Beat        | What happens                                                                                       |
+| ----------- | -------------------------------------------------------------------------------------------------- |
+| 0 → 200ms   | the panels grow in from the edges, each with its strip on its outer edge, and close over the title |
+| 120 → 380ms | boxes of static wipe in, hold and wipe out over the panels, twice each, crossing the card between  |
+| 200 → 280ms | the strips dart to the seam; the title turns on underneath, unseen                                 |
+| 280 → 800ms | the panels pull back toward the edges they came from and the title emerges from the centre outward |
+| 640 → 800ms | the last slivers thin to nothing at the edges, the strips with them; the halo settles              |
+
+The card quotes the mechanics; the tones are the entry's. `titleTones` in the
+frontmatter may name `primary` (the panels), `secondary` (the strips and the
+static) and `text` (the title), each as any CSS colour, and each one left out
+falls through to the palette. The defaults are `#2323ce`, `#50ffa2` and, for the
+text, white in dark and `--p-ink` in light — the one theme-dependent default,
+since white on a white page is nothing. The halo is the title's own light at
+50%, switched off on a white page with `light-dark()` on the element itself, so
+a custom `text` tone brings its own halo and an override still reaches it. An
+entry that sets `text` sets it for both themes and owns that contrast.
+
+```yaml
+titleStyle: valo
+titleTones:
+  primary: "#2323ce"
+  secondary: "#50ffa2"
+  text: "#ffffff"
+```
+
+Rules:
+
+- **Everything is clipped, nothing moves.** The four overlays span the title box
+  and animate `clip-path` only, so the card cannot leave the column — a
+  transformed overlay adds horizontal scroll on a phone. The trade is that the
+  panels start at the title's edges rather than the screen's.
+- **The strips cross; the panels do not.** After the seam each strip rides the
+  _other_ panel's inner edge outward, which is what puts the left one on the
+  right. The panels retract toward the edge they came from: run across the
+  title, they would cover its centre at the moment it should be appearing.
+- **The right-hand pair is the left-hand pair mirrored** (`scale: -1 1`) on one
+  set of keyframes, so the two sides share a clock by construction.
+- **Nothing fades.** Every layer leaves the way it arrived, thinned to zero
+  width — the panels into the edges, the strips with the panel they ride, the
+  static through its own right edge. There is no `opacity` in the card at all.
+- **The static wipes, it never pops.** Each box wipes in from its left edge,
+  holds, wipes out through its right edge, then does the same once more from
+  the other side of the card; it changes spot only while it is closed. A cut
+  would read as a fault rather than a flourish. Three boxes on 20ms offsets,
+  spots in `%` of the title box so they cannot leave it either.
+- **The overrides are three custom properties on the card's frame**, and every
+  rule and keyframe reads those rather than the palette, which is what lets an
+  inline retone reach every layer, halo included.
+- The title is one real text node under empty, `aria-hidden` overlays, so the
+  accessible name is the title with nothing to duplicate.
+- The title turns on only once the panels have closed over it, so no glyph is
+  seen ahead of the card, and the halo arrives with the reveal.
+- Under reduced motion the card is skipped and the title is simply present in
+  its settled colour.
+- The clock is `--duration-very-slow × 1.6`; like `matrix`, a one-shot entrance
+  timed to the reveal rather than to the interaction scale in §6.
 
 ---
 

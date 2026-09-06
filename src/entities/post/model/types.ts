@@ -2,7 +2,15 @@ import type { MDXProps } from "mdx/types";
 
 // The entrance a post's title uses. Adding one means a new case in
 // `AnimatedTitle`; posts that name none get the plain title.
-export type TitleStyle = "plain" | "matrix";
+export type TitleStyle = "plain" | "matrix" | "valo";
+
+// Tones an entry may set for an entrance that takes them; each one that is
+// left out falls through to the palette default.
+export type TitleTones = {
+  primary?: string;
+  secondary?: string;
+  text?: string;
+};
 
 export type PostHeading = {
   depth: number;
@@ -17,6 +25,7 @@ export type PostFrontmatter = {
   updated?: string;
   author?: string;
   titleStyle?: TitleStyle;
+  titleTones?: TitleTones;
   tags?: Array<string>;
   draft?: boolean;
 };
@@ -35,6 +44,7 @@ export type PostSummary = {
   updated?: string;
   author?: string;
   titleStyle: TitleStyle;
+  titleTones?: TitleTones;
   tags: Array<string>;
   readingMinutes: number;
 };

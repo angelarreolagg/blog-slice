@@ -27,6 +27,10 @@
   --p-scan-settled: var(--p-ink);
   --p-scan-glow: transparent;
 
+  --p-valo-primary: oklch(0.417 0.245 269);
+  --p-valo-secondary: oklch(0.89 0.192 155.4);
+  --p-valo-text: var(--p-ink);
+
   --p-code-comment: oklch(0.535 0.01 260);
   --p-code-string: oklch(0.48 0.09 150);
   --p-code-keyword: oklch(0.48 0.13 300);
@@ -68,6 +72,10 @@
     --p-scan-hot: oklch(0.966 0.051 196);
     --p-scan-settled: var(--p-scan-hot);
     --p-scan-glow: oklch(0.594 0.165 253.3);
+
+    --p-valo-primary: oklch(0.417 0.245 269);
+    --p-valo-secondary: oklch(0.89 0.192 155.4);
+    --p-valo-text: oklch(1 0 0);
     --p-code-comment: oklch(0.62 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
     --p-code-keyword: oklch(0.78 0.07 300);
@@ -105,6 +113,10 @@
   --p-scan-hot: oklch(0.966 0.051 196);
   --p-scan-settled: var(--p-scan-hot);
   --p-scan-glow: oklch(0.594 0.165 253.3);
+
+  --p-valo-primary: oklch(0.417 0.245 269);
+  --p-valo-secondary: oklch(0.89 0.192 155.4);
+  --p-valo-text: oklch(1 0 0);
   --p-code-comment: oklch(0.62 0.01 260);
   --p-code-string: oklch(0.8 0.06 150);
   --p-code-keyword: oklch(0.78 0.07 300);
@@ -138,6 +150,10 @@
   --color-scan-hot: var(--p-scan-hot);
   --color-scan-settled: var(--p-scan-settled);
   --color-scan-glow: var(--p-scan-glow);
+
+  --color-valo-primary: var(--p-valo-primary);
+  --color-valo-secondary: var(--p-valo-secondary);
+  --color-valo-text: var(--p-valo-text);
 
   --color-code-comment: var(--p-code-comment);
   --color-code-string: var(--p-code-string);
@@ -242,6 +258,14 @@
 
   --animate-matrix-char: matrix-char 220ms var(--ease-out-quart) both;
   --animate-matrix-grid: matrix-grid 220ms var(--ease-out-quart) both;
+  --animate-valo-block: valo-block calc(var(--duration-very-slow) * 1.6)
+    var(--ease-smooth-out) both;
+  --animate-valo-strip: valo-strip calc(var(--duration-very-slow) * 1.6)
+    var(--ease-smooth-out) both;
+  --animate-valo-text: valo-text calc(var(--duration-very-slow) * 1.6)
+    var(--ease-in-out) both;
+  --animate-valo-glitch: valo-glitch calc(var(--duration-very-slow) * 1.6)
+    var(--ease-smooth-out) both;
 
   /* The cell is pure light while it is lit, and the glyph is written by it as
      it leaves, keeping the light's own colour. Element opacity cannot express
@@ -304,6 +328,99 @@
     100% {
       opacity: 1;
       filter: blur(0);
+    }
+  }
+
+  /* One clock for every layer of the card. The panels grow in from the edges,
+     meet, and pull back toward the edge they came from; each strip waits on
+     its panel's outer edge, darts to the seam, then rides the *other* panel's
+     inner edge out — which is how the left one ends on the right. Everything
+     is clipped rather than moved, so nothing can leave the title box, and
+     every layer leaves the way it came: thinned to nothing, never faded. */
+  @keyframes valo-block {
+    0% {
+      clip-path: inset(0 100% 0 0);
+    }
+    25%,
+    35% {
+      clip-path: inset(0 50% 0 0);
+    }
+    100% {
+      clip-path: inset(0 100% 0 0);
+    }
+  }
+
+  @keyframes valo-strip {
+    0%,
+    25% {
+      clip-path: inset(0 calc(100% - var(--valo-strip)) 0 0);
+    }
+    35% {
+      clip-path: inset(0 50% 0 calc(50% - var(--valo-strip)));
+    }
+    100% {
+      clip-path: inset(0 0 0 100%);
+    }
+  }
+
+  /* The text turns on under the closed panels, so the switch is never seen. */
+  @keyframes valo-text {
+    0%,
+    25% {
+      opacity: 0;
+      text-shadow:
+        0 0 0.06em transparent,
+        0 0 0.4em transparent;
+    }
+    30%,
+    40% {
+      opacity: 1;
+      text-shadow:
+        0 0 0.06em transparent,
+        0 0 0.4em transparent;
+    }
+    85%,
+    100% {
+      opacity: 1;
+      text-shadow:
+        0 0 0.06em var(--valo-halo),
+        0 0 0.4em var(--valo-halo);
+    }
+  }
+
+  /* The card's static: boxes in the secondary tone that wipe in, hold and
+     wipe out over the panels, twice each and always left to right, changing
+     spot only while they are closed. A jump would read as a fault. */
+  @keyframes valo-glitch {
+    0%,
+    15% {
+      clip-path: inset(0 100% 0 0);
+      inset-inline-start: var(--gx);
+      inset-block-start: var(--gy);
+    }
+    19%,
+    25% {
+      clip-path: inset(0);
+    }
+    29% {
+      clip-path: inset(0 0 0 100%);
+      inset-inline-start: var(--gx);
+      inset-block-start: var(--gy);
+    }
+    30% {
+      clip-path: inset(0 100% 0 0);
+      inset-inline-start: var(--gx2);
+      inset-block-start: var(--gy2);
+    }
+    34%,
+    39% {
+      clip-path: inset(0);
+    }
+    43%,
+    100% {
+      clip-path: inset(0 0 0 100%);
+      inset-inline-start: var(--gx2);
+      inset-block-start: var(--gy2);
     }
   }
 
@@ -568,6 +685,90 @@
     );
     background-size: 0.075em 0.075em;
     pointer-events: none;
+  }
+
+  /* A match-found card over the title. The overlays are clipped in place and
+     the right-hand pair is the left-hand pair mirrored, so both sides share
+     one set of keyframes and cannot drift apart. */
+  .valo-frame {
+    --valo-primary: var(--color-valo-primary);
+    --valo-secondary: var(--color-valo-secondary);
+    --valo-text: var(--color-valo-text);
+    --valo-strip: 0.18em;
+    position: relative;
+    display: inline-block;
+  }
+  .valo-text {
+    /* The halo is the title's own light, and a white page has none. */
+    --valo-halo: light-dark(
+      transparent,
+      color-mix(in oklab, var(--valo-text) 50%, transparent)
+    );
+    color: var(--valo-text);
+    animation: var(--animate-valo-text);
+  }
+  .valo-block,
+  .valo-strip {
+    position: absolute;
+    inset: -0.06em 0;
+    pointer-events: none;
+  }
+  .valo-block {
+    background-color: var(--valo-primary);
+    animation: var(--animate-valo-block);
+  }
+  .valo-strip {
+    background-color: var(--valo-secondary);
+    animation: var(--animate-valo-strip);
+  }
+  .valo-flip {
+    scale: -1 1;
+  }
+  .valo-glitch {
+    position: absolute;
+    inline-size: var(--gw);
+    block-size: var(--gh);
+    background-color: var(--valo-secondary);
+    pointer-events: none;
+    animation: var(--animate-valo-glitch);
+  }
+  .valo-glitch:nth-child(1 of .valo-glitch) {
+    --g: 0;
+    --gw: 22%;
+    --gh: 0.3em;
+    --gx: 72%;
+    --gy: 8%;
+    --gx2: 6%;
+    --gy2: 76%;
+  }
+  .valo-glitch:nth-child(2 of .valo-glitch) {
+    --g: 1;
+    --gw: 16%;
+    --gh: 0.14em;
+    --gx: 12%;
+    --gy: 84%;
+    --gx2: 80%;
+    --gy2: 22%;
+  }
+  .valo-glitch:nth-child(3 of .valo-glitch) {
+    --g: 2;
+    --gw: 0.5em;
+    --gh: 100%;
+    --gx: 20%;
+    --gy: 0;
+    --gx2: 84%;
+    --gy2: 0;
+  }
+  /* After the shorthands, for the same reason as the matrix delay above. */
+  .valo-text,
+  .valo-block,
+  .valo-strip {
+    animation-delay: var(--duration-micro);
+  }
+  .valo-glitch {
+    animation-delay: calc(
+      var(--duration-micro) + var(--g) * var(--duration-stagger) / 2
+    );
   }
   /* One-shot page-header entrance: semantic chunks, 100ms apart. */
   .stagger-enter > * {
