@@ -175,8 +175,8 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
     --p-select: oklch(0.72 0.15 250);
     --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
-    --p-scan: oklch(0.685 0.15 255);
-    --p-scan-hot: oklch(0.94 0.055 210);
+    --p-scan: oklch(0.783 0.105 255);
+    --p-scan-hot: oklch(0.968 0.028 210);
 
     --p-code-comment: oklch(0.55 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
@@ -753,13 +753,15 @@ passes. Nothing has been typed ahead of it.
 | 0 → 80ms        | the first cell lights at the top left                                                                       |
 | 80 → 780ms      | the block runs the whole title, ~12–15 cells lit at once — a bright head with a cooling trail               |
 | per cell, 220ms | the cell lights `scan-hot` with nothing in it, cools to `scan`, then clears as its glyph fades up behind it |
-| → 1.1s          | the glow peaks mid-run and settles to a faint blue afterglow                                                |
+| → 1.0s          | the last cell clears; nothing glows once the title has settled                                              |
 
 The block is the character's own `background-color`, so it is a real terminal
 cell: it hugs the glyph, needs no extra element, and follows the text across line
-breaks for free. Its tones are sampled from the reference HUD — the bar body
-measures `oklch(0.571 0.164 258)` and its text `oklch(0.94 0.053 210)` — with the
-block set 20% above the bar's lightness. The scan window is `--duration-very-slow × 1.4`; it is a
+breaks for free. Its tones start from the reference HUD — the bar
+body measures `oklch(0.571 0.164 258)` and its text `oklch(0.94 0.053 210)` — and
+are then lifted: the trail carries **1.5× the reference bar's luminance**, and the
+head goes as bright as sRGB allows, which is only 1.08× since it already sits
+near white. The scan window is `--duration-very-slow × 1.4`; it is a
 one-shot entrance whose length is set by how fast text can be read appearing, not
 by the interaction scale in §6.
 
@@ -770,7 +772,13 @@ whole lit phase and cross-fades up to `--color-ink` as the cell's
 fade the block and the glyph together — so the two layers each carry their own
 colour. The same keyframes are correct in both themes; only the cell's tone
 differs (emissive in dark, deep and flat in light, since nothing emits on a white
-page) along with the glow, which is dark-mode only.
+page).
+
+**Nothing glows, and that is a constraint rather than a preference.** A
+`text-shadow` on the title paints every glyph's _shape_, including the ones still
+waiting to be swept — `color: transparent` hides the fill but not the shadow — so
+a glow renders a blurred ghost of the whole pending title. Any glow here has to
+live inside the per-character keyframes, never on an ancestor.
 
 Rules:
 
