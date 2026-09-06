@@ -24,6 +24,8 @@
 
   --p-scan: oklch(0.5 0.12 245);
   --p-scan-hot: oklch(0.36 0.16 255);
+  --p-scan-settled: var(--p-ink);
+  --p-scan-glow: transparent;
 
   --p-code-comment: oklch(0.535 0.01 260);
   --p-code-string: oklch(0.48 0.09 150);
@@ -63,7 +65,9 @@
     --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
     --p-scan: oklch(0.783 0.105 255);
-    --p-scan-hot: oklch(0.968 0.028 210);
+    --p-scan-hot: oklch(0.966 0.051 196);
+    --p-scan-settled: var(--p-scan-hot);
+    --p-scan-glow: oklch(0.594 0.165 253.3);
     --p-code-comment: oklch(0.62 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
     --p-code-keyword: oklch(0.78 0.07 300);
@@ -98,7 +102,9 @@
   --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
   --p-scan: oklch(0.783 0.105 255);
-  --p-scan-hot: oklch(0.968 0.028 210);
+  --p-scan-hot: oklch(0.966 0.051 196);
+  --p-scan-settled: var(--p-scan-hot);
+  --p-scan-glow: oklch(0.594 0.165 253.3);
   --p-code-comment: oklch(0.62 0.01 260);
   --p-code-string: oklch(0.8 0.06 150);
   --p-code-keyword: oklch(0.78 0.07 300);
@@ -130,6 +136,8 @@
 
   --color-scan: var(--p-scan);
   --color-scan-hot: var(--p-scan-hot);
+  --color-scan-settled: var(--p-scan-settled);
+  --color-scan-glow: var(--p-scan-glow);
 
   --color-code-comment: var(--p-code-comment);
   --color-code-string: var(--p-code-string);
@@ -235,35 +243,51 @@
   --animate-matrix-char: matrix-char 220ms var(--ease-out-quart) both;
   --animate-matrix-grid: matrix-grid 220ms var(--ease-out-quart) both;
 
-  /* The glyph is unlit while the bar is over it, then resolves to ink as the
-     bar fades. The same two keyframes invert correctly in both themes. */
   /* The cell is pure light while it is lit, and the glyph is written by it as
-     it leaves. Element opacity cannot express that — it would fade the block
-     and the glyph together — so the two layers carry their own colour. */
+     it leaves, keeping the light's own colour. Element opacity cannot express
+     that — it would fade the block and the glyph together — so each of the
+     three layers carries its own colour, and the halo is declared at every
+     stop so an unswept glyph holds a fully transparent shadow rather than
+     interpolating one out of nothing. */
   @keyframes matrix-char {
     0% {
       color: transparent;
       background-color: transparent;
+      text-shadow:
+        0 0 0.08em transparent,
+        0 0 0.34em transparent;
       filter: blur(0.18em);
     }
     14% {
       color: transparent;
       background-color: var(--color-scan-hot);
+      text-shadow:
+        0 0 0.08em transparent,
+        0 0 0.34em transparent;
       filter: blur(0.09em);
     }
     46% {
       color: transparent;
       background-color: var(--color-scan);
+      text-shadow:
+        0 0 0.08em transparent,
+        0 0 0.34em transparent;
       filter: blur(0.05em);
     }
     78% {
-      color: var(--color-ink);
+      color: var(--color-scan-settled);
       background-color: transparent;
+      text-shadow:
+        0 0 0.08em var(--color-scan-glow),
+        0 0 0.34em var(--color-scan-glow);
       filter: blur(0);
     }
     100% {
-      color: var(--color-ink);
+      color: var(--color-scan-settled);
       background-color: transparent;
+      text-shadow:
+        0 0 0.08em var(--color-scan-glow),
+        0 0 0.34em var(--color-scan-glow);
       filter: blur(0);
     }
   }

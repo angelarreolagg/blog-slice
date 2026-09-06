@@ -137,6 +137,8 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
   /* Quotation: a game HUD's score popup. See §1.3 and §5.21. */
   --p-scan: oklch(0.5 0.12 245);
   --p-scan-hot: oklch(0.36 0.16 255);
+  --p-scan-settled: var(--p-ink);
+  --p-scan-glow: transparent;
 
   --p-code-comment: oklch(0.58 0.01 260);
   --p-code-string: oklch(0.48 0.09 150);
@@ -176,7 +178,9 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
     --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
     --p-scan: oklch(0.783 0.105 255);
-    --p-scan-hot: oklch(0.968 0.028 210);
+    --p-scan-hot: oklch(0.966 0.051 196); /* #cdffff */
+    --p-scan-settled: var(--p-scan-hot);
+    --p-scan-glow: oklch(0.594 0.165 253.3); /* #247fdd */
 
     --p-code-comment: oklch(0.55 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
@@ -217,6 +221,8 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
 
   --color-scan: var(--p-scan);
   --color-scan-hot: var(--p-scan-hot);
+  --color-scan-settled: var(--p-scan-settled);
+  --color-scan-glow: var(--p-scan-glow);
 
   --color-code-comment: var(--p-code-comment);
   --color-code-string: var(--p-code-string);
@@ -341,15 +347,15 @@ tinted neutral, which reads as dirt on the edge.
 
 ### Color usage rules
 
-| Token       | Yes                                                  | No                                           |
-| ----------- | ---------------------------------------------------- | -------------------------------------------- |
-| `ink`       | Prose, headings, link text                           | Meta, dates                                  |
-| `ink-muted` | Deck, card description, inactive nav                 | Prose body                                   |
-| `ink-faint` | Date, tag, image caption                             | Any text that has to be read carefully       |
-| `accent`    | Keyword, focus ring, the active element of a diagram | Links, buttons, headings, decorative borders |
-| `select`    | The selection frame, handles and fill of §5.20       | Anything else at all — it is a quotation     |
-| `scan`      | The sweeping bar of the `matrix` entrance, §5.21     | Anything else at all — it is a quotation     |
-| `line`      | Hairlines, card border at rest                       | Separating paragraphs                        |
+| Token       | Yes                                                                        | No                                           |
+| ----------- | -------------------------------------------------------------------------- | -------------------------------------------- |
+| `ink`       | Prose, headings, link text                                                 | Meta, dates                                  |
+| `ink-muted` | Deck, card description, inactive nav                                       | Prose body                                   |
+| `ink-faint` | Date, tag, image caption                                                   | Any text that has to be read carefully       |
+| `accent`    | Keyword, focus ring, the active element of a diagram                       | Links, buttons, headings, decorative borders |
+| `select`    | The selection frame, handles and fill of §5.20                             | Anything else at all — it is a quotation     |
+| `scan`      | The sweeping bar of the `matrix` entrance, and the glyphs it leaves, §5.21 | Anything else at all — it is a quotation     |
+| `line`      | Hairlines, card border at rest                                             | Separating paragraphs                        |
 
 Check contrast with a real tool before moving any `L` value: OKLCH lightness is not WCAG relative luminance. Floor: **4.5:1** for text under 24px, **in both modes**.
 
@@ -753,32 +759,41 @@ passes. Nothing has been typed ahead of it.
 | 0 → 80ms        | the first cell lights at the top left                                                                       |
 | 80 → 780ms      | the block runs the whole title, ~12–15 cells lit at once — a bright head with a cooling trail               |
 | per cell, 220ms | the cell lights `scan-hot` with nothing in it, cools to `scan`, then clears as its glyph fades up behind it |
-| → 1.0s          | the last cell clears; nothing glows once the title has settled                                              |
+| → 1.0s          | the last cell clears; the title is left in the light's own colour, haloed                                   |
 
 The block is the character's own `background-color`, so it is a real terminal
 cell: it hugs the glyph, needs no extra element, and follows the text across line
-breaks for free. Its tones start from the reference HUD — the bar
-body measures `oklch(0.571 0.164 258)` and its text `oklch(0.94 0.053 210)` — and
-are then lifted: the trail carries **1.5× the reference bar's luminance**, and the
-head goes as bright as sRGB allows, which is only 1.08× since it already sits
-near white. The scan window is `--duration-very-slow × 1.4`; it is a
+breaks for free. Its tones are given, not derived: the head is `#cdffff` and the
+halo `#247fdd`, both stored as OKLCH in the palette and both round-tripping to
+their exact hex. The trail between them stays at **1.5× the reference HUD bar's
+luminance** (`oklch(0.783 0.105 255)`), which is what makes the head read as a
+hot core rather than a flat fill. The scan window is `--duration-very-slow × 1.4`; it is a
 one-shot entrance whose length is set by how fast text can be read appearing, not
 by the interaction scale in §6.
 
 **The cell is pure light, and the glyph is written by it as it leaves.** Nothing
 is drawn where the block is: the glyph's `color` stays `transparent` for the
-whole lit phase and cross-fades up to `--color-ink` as the cell's
+whole lit phase and cross-fades up to `--color-scan-settled` as the cell's
 `background-color` fades out. Element `opacity` cannot express that — it would
-fade the block and the glyph together — so the two layers each carry their own
-colour. The same keyframes are correct in both themes; only the cell's tone
-differs (emissive in dark, deep and flat in light, since nothing emits on a white
-page).
+fade the block and the glyph together — so the three layers each carry their own
+colour.
 
-**Nothing glows, and that is a constraint rather than a preference.** A
-`text-shadow` on the title paints every glyph's _shape_, including the ones still
-waiting to be swept — `color: transparent` hides the fill but not the shadow — so
-a glow renders a blurred ghost of the whole pending title. Any glow here has to
-live inside the per-character keyframes, never on an ancestor.
+**The title keeps the colour of the light that wrote it**, which is the one place
+in the system where a heading is not `ink`. In dark it settles to `scan-settled`
+— the head's own `#cdffff`, at 17.6:1 on the page — under a `#247fdd` halo, so
+the panel still reads as lit after the sweep has gone. Light mode is the
+exception the quotation allows: nothing emits on a white page, so
+`--p-scan-settled` resolves to `--p-ink` and `--p-scan-glow` to `transparent`,
+and the same keyframes produce a black title with no halo at all.
+
+**The halo lives inside the per-character keyframes, never on an ancestor**, and
+that is a constraint rather than a preference. A `text-shadow` on the title
+paints every glyph's _shape_, including the ones still waiting to be swept —
+`color: transparent` hides the fill but not the shadow — so a glow on `.matrix-title`
+renders a blurred ghost of the whole pending title. For the same reason the
+shadow is declared at **every** keyframe stop, transparent until the glyph
+arrives: interpolating out of `none` leaves the unswept state to the list-padding
+rules rather than stating it.
 
 Rules:
 
@@ -795,10 +810,10 @@ Rules:
   whole word and hiding the glyphs inside it.
 - **No text is ever painted on the block.** A glyph coloured to contrast against
   the lit cell reads as a highlighter dragged over text that was already there,
-  which is the opposite of light writing it. The only text that ever renders is
-  `--color-ink` on the page background, so there is no transient contrast pair to
-  check — and the block is free to be as bright as the reference, since nothing
-  has to stay legible through it.
+  which is the opposite of light writing it. The only text that ever renders sits
+  on the page background, so there is no transient contrast pair to check — and
+  the block is free to be as bright as the reference, since nothing has to stay
+  legible through it.
 - Under reduced motion every glyph is present immediately and the dot texture
   stays — the pixelation is the style, not the motion.
 
