@@ -22,6 +22,9 @@
   --p-select: oklch(0.6 0.17 250);
   --p-select-fill: oklch(0.6 0.17 250 / 0.12);
 
+  --p-scan: oklch(0.5 0.12 245);
+  --p-scan-hot: oklch(0.36 0.16 255);
+
   --p-code-comment: oklch(0.535 0.01 260);
   --p-code-string: oklch(0.48 0.09 150);
   --p-code-keyword: oklch(0.48 0.13 300);
@@ -59,6 +62,8 @@
 
     --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
+    --p-scan: oklch(0.6 0.16 245);
+    --p-scan-hot: oklch(0.95 0.06 220);
     --p-code-comment: oklch(0.62 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
     --p-code-keyword: oklch(0.78 0.07 300);
@@ -92,6 +97,8 @@
 
   --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
+  --p-scan: oklch(0.6 0.16 245);
+  --p-scan-hot: oklch(0.95 0.06 220);
   --p-code-comment: oklch(0.62 0.01 260);
   --p-code-string: oklch(0.8 0.06 150);
   --p-code-keyword: oklch(0.78 0.07 300);
@@ -120,6 +127,9 @@
 
   --color-select: var(--p-select);
   --color-select-fill: var(--p-select-fill);
+
+  --color-scan: var(--p-scan);
+  --color-scan-hot: var(--p-scan-hot);
 
   --color-code-comment: var(--p-code-comment);
   --color-code-string: var(--p-code-string);
@@ -224,15 +234,68 @@
 
   --animate-matrix-char: matrix-char var(--duration-slow) var(--ease-out-quart)
     both;
+  --animate-matrix-sweep: matrix-sweep 700ms var(--ease-out-quart) both;
+  --animate-matrix-glow: matrix-glow 900ms var(--ease-out-quart) both;
 
+  /* The glyph is unlit while the bar is over it, then resolves to ink as the
+     bar fades. The same two keyframes invert correctly in both themes. */
   @keyframes matrix-char {
-    from {
+    0% {
       opacity: 0;
+      color: var(--color-bg);
       filter: blur(0.14em);
     }
-    to {
+    30% {
       opacity: 1;
+      color: var(--color-bg);
+      filter: blur(0.07em);
+    }
+    70% {
+      color: var(--color-ink);
       filter: blur(0);
+    }
+    100% {
+      opacity: 1;
+      color: var(--color-ink);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes matrix-sweep {
+    0% {
+      opacity: 0;
+      transform: scaleX(0.06) scaleY(0.55);
+    }
+    10% {
+      opacity: 1;
+      transform: scaleX(0.06) scaleY(0.55);
+    }
+    42% {
+      opacity: 1;
+      transform: scaleX(1) scaleY(1);
+    }
+    62% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 0;
+      transform: scaleX(1) scaleY(1);
+    }
+  }
+
+  @keyframes matrix-glow {
+    0%,
+    30% {
+      text-shadow: none;
+    }
+    62% {
+      text-shadow:
+        0 0 0.28em color-mix(in oklab, var(--color-scan-hot) 55%, transparent),
+        0 0 0.9em color-mix(in oklab, var(--color-scan) 70%, transparent);
+    }
+    100% {
+      text-shadow: 0 0 0.5em
+        color-mix(in oklab, var(--color-scan) 40%, transparent);
     }
   }
 
@@ -466,9 +529,26 @@
   .matrix-char,
   .matrix-word::after {
     animation: var(--animate-matrix-char);
-    animation-delay: calc(
-      var(--duration-micro) + var(--i) / var(--n) * var(--duration-fast)
-    );
+    animation-delay: calc(210ms + var(--i) / var(--n) * var(--duration-fast));
+  }
+
+  /* The bar: a seed that stretches across the whole title and fades out as the
+     glyphs resolve inside it. It carries the same grid, so the streak is
+     pixelated too. */
+  .matrix-heading::before {
+    content: "";
+    position: absolute;
+    inset: -0.06em -0.08em;
+    z-index: -1;
+    transform-origin: left center;
+    background-image:
+      radial-gradient(circle, var(--color-bg) 0.018em, transparent 0.022em),
+      linear-gradient(90deg, var(--color-scan-hot), var(--color-scan));
+    background-size:
+      0.075em 0.075em,
+      100% 100%;
+    animation: var(--animate-matrix-sweep);
+    pointer-events: none;
   }
   /* The grid belongs to the word, not the glyph: it stays continuous across
      letters, and an inline character loses its ::after at a line break. */
@@ -489,17 +569,14 @@
     background-size: 0.075em 0.075em;
     pointer-events: none;
   }
-  /* Only a dark panel can glow; in light mode the dots read as a halftone. */
-  :root[data-theme="dark"] .matrix-title,
+  /* Only a dark panel can glow; in light mode the same bar reads as a wash. */
   :root:not([data-theme="light"]) .matrix-title {
     @media (prefers-color-scheme: dark) {
-      text-shadow: 0 0 0.5em
-        color-mix(in oklab, var(--color-ink) 35%, transparent);
+      animation: var(--animate-matrix-glow);
     }
   }
   [data-theme="dark"] .matrix-title {
-    text-shadow: 0 0 0.5em
-      color-mix(in oklab, var(--color-ink) 35%, transparent);
+    animation: var(--animate-matrix-glow);
   }
 
   /* One-shot page-header entrance: semantic chunks, 100ms apart. */

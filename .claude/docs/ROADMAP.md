@@ -384,7 +384,8 @@ exact Motion values. The style document's §6 records the split.
       a selected layer, with its really measured box on hover
 
 - [x] `AnimatedTitle`: an optional per-entry title entrance, opened with the
-      `matrix` LED-panel style
+      `matrix` LED-panel style — a bar of light sweeps the title box and the
+      glyphs resolve inside it, quoting a game HUD's score popup
 
 **Done when:** an entry tells you where you are, who wrote it and how long it
 takes, and every duration in the project references a token.

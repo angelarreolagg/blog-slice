@@ -17,7 +17,7 @@ Four decisions drive everything else:
 2. **Color does not create hierarchy.** Size, weight, and whitespace do. The grays carry the load.
 3. **There is one chromatic accent and it is reserved.** Amber (`--color-accent`) appears only on interactive _keywords_, on the focus ring, and on the active element of a diagram. Regular links are NOT colored: they are underlined text. This makes keywords the only thing on the page that "glows", which is exactly the point of the project.
 
-   **Quotations are the exception, and there are exactly two.** A quotation borrows another environment's colours because that environment is what the reader is being shown: the four `--color-code-*` tokens quote a syntax highlighter, and `--color-select` quotes a design tool's selection (§5.20). Neither is a brand colour, neither may be reused for anything else, and no third quotation is added without amending this list.
+   **Quotations are the exception, and there are exactly three.** A quotation borrows another environment's colours because that environment is what the reader is being shown: the four `--color-code-*` tokens quote a syntax highlighter, `--color-select` quotes a design tool's selection (§5.20), and `--color-scan` quotes a game HUD's score popup (§5.21). None is a brand colour, none may be reused outside the section that owns it, and no fourth quotation is added without amending this list.
 
 4. **Two modes, one personality.** Light and dark are the same design with the lightness scale inverted. The light mode isn't warmer and the dark mode isn't more "premium": both are neutral with the same barely-perceptible cool hue.
 
@@ -134,6 +134,10 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
   --p-select: oklch(0.6 0.17 250);
   --p-select-fill: oklch(0.6 0.17 250 / 0.12);
 
+  /* Quotation: a game HUD's score popup. See §1.3 and §5.21. */
+  --p-scan: oklch(0.5 0.12 245);
+  --p-scan-hot: oklch(0.36 0.16 255);
+
   --p-code-comment: oklch(0.58 0.01 260);
   --p-code-string: oklch(0.48 0.09 150);
   --p-code-keyword: oklch(0.48 0.13 300);
@@ -171,6 +175,9 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
     --p-select: oklch(0.72 0.15 250);
     --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
+    --p-scan: oklch(0.6 0.16 245);
+    --p-scan-hot: oklch(0.95 0.06 220);
+
     --p-code-comment: oklch(0.55 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
     --p-code-keyword: oklch(0.78 0.07 300);
@@ -207,6 +214,9 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
 
   --color-select: var(--p-select);
   --color-select-fill: var(--p-select-fill);
+
+  --color-scan: var(--p-scan);
+  --color-scan-hot: var(--p-scan-hot);
 
   --color-code-comment: var(--p-code-comment);
   --color-code-string: var(--p-code-string);
@@ -338,6 +348,7 @@ tinted neutral, which reads as dirt on the edge.
 | `ink-faint` | Date, tag, image caption                             | Any text that has to be read carefully       |
 | `accent`    | Keyword, focus ring, the active element of a diagram | Links, buttons, headings, decorative borders |
 | `select`    | The selection frame, handles and fill of §5.20       | Anything else at all — it is a quotation     |
+| `scan`      | The sweeping bar of the `matrix` entrance, §5.21     | Anything else at all — it is a quotation     |
 | `line`      | Hairlines, card border at rest                       | Separating paragraphs                        |
 
 Check contrast with a real tool before moving any `L` value: OKLCH lightness is not WCAG relative luminance. Floor: **4.5:1** for text under 24px, **in both modes**.
@@ -728,12 +739,31 @@ means a new case in `AnimatedTitle` and a new section here.
 | `plain` (default) | The header's own staggered chunk. Nothing else. |
 | `matrix`          | An LED panel resolving, below.                  |
 
-**`matrix`** renders the title as if it were on a dot-matrix display seen close
-up. Each word carries a grid of background-coloured dots punched over its
-glyphs, so only the lit text is pixelated and the page around it is untouched —
-in dark mode the panel also glows, in light mode the same grid reads as a
-halftone. The title resolves out of a blur, character by character, left to
-right.
+**`matrix`** quotes a game HUD's score popup. The title sits on a dot-matrix
+display seen close up: each word carries a grid of background-coloured dots
+punched over its glyphs, so only the lit text is pixelated and the page around it
+is untouched.
+
+The entrance is a bar of light that sweeps, with the text resolving **inside**
+it — not a fade:
+
+| Beat         | What happens                                                         |
+| ------------ | -------------------------------------------------------------------- |
+| 0 → 70ms     | a seed bar fades in at the left, `scaleX(.06) scaleY(.55)`           |
+| 70 → 295ms   | it stretches to the full title box, bright head, blue trail          |
+| 210ms + scan | the glyphs appear **unlit**, `color: --color-bg`, inside the lit bar |
+| 295 → 700ms  | the bar fades; each glyph resolves to `--color-ink` as it goes       |
+| → 900ms      | the glow peaks and settles to a faint blue afterglow                 |
+
+The bar is a single rectangle over the whole title box, not one per word, and it
+carries the same dot grid so the streak is pixelated too.
+
+**The inversion is what carries it, and it needs no per-theme branch.** Each
+glyph animates `color` from `--color-bg` to `--color-ink`: in dark mode that is
+near-black text on the lit blue bar resolving to near-white, in light mode the
+identical keyframes give white text on a deep blue bar resolving to black. Only
+two things differ by theme — the bar's tone (emissive in dark, deep and flat in
+light, since nothing emits on a white page) and the glow, which is dark-mode only.
 
 Rules:
 
@@ -745,6 +775,11 @@ Rules:
   250ms. It replaces the header's chunk animation rather than stacking with it.
 - The heading carries the plain title in an `sr-only` span and the split copy
   `aria-hidden`, so the accessible name is the title exactly once.
+- **Only the transient states need checking for contrast, not a resting one.**
+  Unlike the keyword — whose rest must clear 4.5:1 because it may never reveal —
+  this animation always completes, so the resting state is plain `text-ink`. The
+  unlit glyphs on the bar still clear 4.5:1 in both modes, which is what makes
+  the middle of the animation readable rather than merely brief.
 - Under reduced motion every glyph is present immediately and the dot texture
   stays — the pixelation is the style, not the motion.
 
