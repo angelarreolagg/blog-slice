@@ -175,8 +175,8 @@ Tailwind v4 generates utilities from the **prefix**: a mis-prefixed token genera
     --p-select: oklch(0.72 0.15 250);
     --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
-    --p-scan: oklch(0.6 0.16 245);
-    --p-scan-hot: oklch(0.95 0.06 220);
+    --p-scan: oklch(0.685 0.15 255);
+    --p-scan-hot: oklch(0.94 0.055 210);
 
     --p-code-comment: oklch(0.55 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
@@ -757,7 +757,11 @@ passes. Nothing has been typed ahead of it.
 
 The block is the character's own `background-color`, so it is a real terminal
 cell: it hugs the glyph, needs no extra element, and follows the text across line
-breaks for free. The scan window is `--duration-very-slow × 1.4`; it is a
+breaks for free. Its tones are sampled from the reference HUD — the bar body
+measures `oklch(0.571 0.164 258)` and its text `oklch(0.94 0.053 210)` — with the
+block set 20% above the bar's lightness. That brightening is not only taste: at
+the reference's own lightness the unlit glyphs sitting on it reach just 4.30:1,
+and at 1.2× they clear 6.84:1. The scan window is `--duration-very-slow × 1.4`; it is a
 one-shot entrance whose length is set by how fast text can be read appearing, not
 by the interaction scale in §6.
 

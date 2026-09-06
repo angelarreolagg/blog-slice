@@ -62,8 +62,8 @@
 
     --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
-    --p-scan: oklch(0.6 0.16 245);
-    --p-scan-hot: oklch(0.95 0.06 220);
+    --p-scan: oklch(0.685 0.15 255);
+    --p-scan-hot: oklch(0.94 0.055 210);
     --p-code-comment: oklch(0.62 0.01 260);
     --p-code-string: oklch(0.8 0.06 150);
     --p-code-keyword: oklch(0.78 0.07 300);
@@ -97,8 +97,8 @@
 
   --p-select-fill: oklch(0.72 0.15 250 / 0.16);
 
-  --p-scan: oklch(0.6 0.16 245);
-  --p-scan-hot: oklch(0.95 0.06 220);
+  --p-scan: oklch(0.685 0.15 255);
+  --p-scan-hot: oklch(0.94 0.055 210);
   --p-code-comment: oklch(0.62 0.01 260);
   --p-code-string: oklch(0.8 0.06 150);
   --p-code-keyword: oklch(0.78 0.07 300);
