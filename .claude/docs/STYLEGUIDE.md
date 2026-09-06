@@ -748,29 +748,29 @@ The entrance is a **terminal cursor**: a glowing block runs through the glyphs i
 reading order, wrapping lines as it goes, and each character is written as it
 passes. Nothing has been typed ahead of it.
 
-| Beat            | What happens                                                                                  |
-| --------------- | --------------------------------------------------------------------------------------------- |
-| 0 → 80ms        | the first cell lights at the top left                                                         |
-| 80 → 780ms      | the block runs the whole title, ~12–15 cells lit at once — a bright head with a cooling trail |
-| per cell, 220ms | the cell lights `scan-hot`, cools to `scan`, then clears as its glyph resolves                |
-| → 1.1s          | the glow peaks mid-run and settles to a faint blue afterglow                                  |
+| Beat            | What happens                                                                                                |
+| --------------- | ----------------------------------------------------------------------------------------------------------- |
+| 0 → 80ms        | the first cell lights at the top left                                                                       |
+| 80 → 780ms      | the block runs the whole title, ~12–15 cells lit at once — a bright head with a cooling trail               |
+| per cell, 220ms | the cell lights `scan-hot` with nothing in it, cools to `scan`, then clears as its glyph fades up behind it |
+| → 1.1s          | the glow peaks mid-run and settles to a faint blue afterglow                                                |
 
 The block is the character's own `background-color`, so it is a real terminal
 cell: it hugs the glyph, needs no extra element, and follows the text across line
 breaks for free. Its tones are sampled from the reference HUD — the bar body
 measures `oklch(0.571 0.164 258)` and its text `oklch(0.94 0.053 210)` — with the
-block set 20% above the bar's lightness. That brightening is not only taste: at
-the reference's own lightness the unlit glyphs sitting on it reach just 4.30:1,
-and at 1.2× they clear 6.84:1. The scan window is `--duration-very-slow × 1.4`; it is a
+block set 20% above the bar's lightness. The scan window is `--duration-very-slow × 1.4`; it is a
 one-shot entrance whose length is set by how fast text can be read appearing, not
 by the interaction scale in §6.
 
-**The inversion is what carries it, and it needs no per-theme branch.** Each
-glyph animates `color` from `--color-bg` to `--color-ink`: in dark mode that is
-near-black text on the lit blue cell resolving to near-white, in light mode the
-identical keyframes give white text on a deep blue cell resolving to black. Only
-two things differ by theme — the cell's tone (emissive in dark, deep and flat in
-light, since nothing emits on a white page) and the glow, which is dark-mode only.
+**The cell is pure light, and the glyph is written by it as it leaves.** Nothing
+is drawn where the block is: the glyph's `color` stays `transparent` for the
+whole lit phase and cross-fades up to `--color-ink` as the cell's
+`background-color` fades out. Element `opacity` cannot express that — it would
+fade the block and the glyph together — so the two layers each carry their own
+colour. The same keyframes are correct in both themes; only the cell's tone
+differs (emissive in dark, deep and flat in light, since nothing emits on a white
+page) along with the glow, which is dark-mode only.
 
 Rules:
 
@@ -785,11 +785,12 @@ Rules:
 - The grid overlay animates **opacity only**. Give it the cell's keyframes and
   it inherits the cursor's `background-color`, painting a solid block over the
   whole word and hiding the glyphs inside it.
-- **Only the transient states need checking for contrast, not a resting one.**
-  Unlike the keyword — whose rest must clear 4.5:1 because it may never reveal —
-  this animation always completes, so the resting state is plain `text-ink`. The
-  unlit glyphs on the lit cell still clear 4.5:1 in both modes, which is what
-  makes the middle of the animation readable rather than merely brief.
+- **No text is ever painted on the block.** A glyph coloured to contrast against
+  the lit cell reads as a highlighter dragged over text that was already there,
+  which is the opposite of light writing it. The only text that ever renders is
+  `--color-ink` on the page background, so there is no transient contrast pair to
+  check — and the block is free to be as bright as the reference, since nothing
+  has to stay legible through it.
 - Under reduced motion every glyph is present immediately and the dot texture
   stays — the pixelation is the style, not the motion.
 
