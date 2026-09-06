@@ -744,25 +744,28 @@ display seen close up: each word carries a grid of background-coloured dots
 punched over its glyphs, so only the lit text is pixelated and the page around it
 is untouched.
 
-The entrance is a bar of light that sweeps, with the text resolving **inside**
-it — not a fade:
+The entrance is a **terminal cursor**: a glowing block runs through the glyphs in
+reading order, wrapping lines as it goes, and each character is written as it
+passes. Nothing has been typed ahead of it.
 
-| Beat         | What happens                                                         |
-| ------------ | -------------------------------------------------------------------- |
-| 0 → 70ms     | a seed bar fades in at the left, `scaleX(.06) scaleY(.55)`           |
-| 70 → 295ms   | it stretches to the full title box, bright head, blue trail          |
-| 210ms + scan | the glyphs appear **unlit**, `color: --color-bg`, inside the lit bar |
-| 295 → 700ms  | the bar fades; each glyph resolves to `--color-ink` as it goes       |
-| → 900ms      | the glow peaks and settles to a faint blue afterglow                 |
+| Beat            | What happens                                                                                  |
+| --------------- | --------------------------------------------------------------------------------------------- |
+| 0 → 80ms        | the first cell lights at the top left                                                         |
+| 80 → 780ms      | the block runs the whole title, ~12–15 cells lit at once — a bright head with a cooling trail |
+| per cell, 220ms | the cell lights `scan-hot`, cools to `scan`, then clears as its glyph resolves                |
+| → 1.1s          | the glow peaks mid-run and settles to a faint blue afterglow                                  |
 
-The bar is a single rectangle over the whole title box, not one per word, and it
-carries the same dot grid so the streak is pixelated too.
+The block is the character's own `background-color`, so it is a real terminal
+cell: it hugs the glyph, needs no extra element, and follows the text across line
+breaks for free. The scan window is `--duration-very-slow × 1.4`; it is a
+one-shot entrance whose length is set by how fast text can be read appearing, not
+by the interaction scale in §6.
 
 **The inversion is what carries it, and it needs no per-theme branch.** Each
 glyph animates `color` from `--color-bg` to `--color-ink`: in dark mode that is
-near-black text on the lit blue bar resolving to near-white, in light mode the
-identical keyframes give white text on a deep blue bar resolving to black. Only
-two things differ by theme — the bar's tone (emissive in dark, deep and flat in
+near-black text on the lit blue cell resolving to near-white, in light mode the
+identical keyframes give white text on a deep blue cell resolving to black. Only
+two things differ by theme — the cell's tone (emissive in dark, deep and flat in
 light, since nothing emits on a white page) and the glow, which is dark-mode only.
 
 Rules:
@@ -775,11 +778,14 @@ Rules:
   250ms. It replaces the header's chunk animation rather than stacking with it.
 - The heading carries the plain title in an `sr-only` span and the split copy
   `aria-hidden`, so the accessible name is the title exactly once.
+- The grid overlay animates **opacity only**. Give it the cell's keyframes and
+  it inherits the cursor's `background-color`, painting a solid block over the
+  whole word and hiding the glyphs inside it.
 - **Only the transient states need checking for contrast, not a resting one.**
   Unlike the keyword — whose rest must clear 4.5:1 because it may never reveal —
   this animation always completes, so the resting state is plain `text-ink`. The
-  unlit glyphs on the bar still clear 4.5:1 in both modes, which is what makes
-  the middle of the animation readable rather than merely brief.
+  unlit glyphs on the lit cell still clear 4.5:1 in both modes, which is what
+  makes the middle of the animation readable rather than merely brief.
 - Under reduced motion every glyph is present immediately and the dot texture
   stays — the pixelation is the style, not the motion.
 

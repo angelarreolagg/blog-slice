@@ -12,7 +12,7 @@ export function AnimatedTitle({ title, style, className }: AnimatedTitleProps) {
   if (style === "matrix") {
     return (
       // The characters carry their own entrance, so the header's chunk is off.
-      <h1 className={cn("matrix-heading relative animate-none", className)}>
+      <h1 className={cn("animate-none", className)}>
         <MatrixTitle title={title} />
       </h1>
     );

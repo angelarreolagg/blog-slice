@@ -71,6 +71,7 @@ These cost time when rediscovered:
 - **A table-of-contents slugger must match `rehype-slug`.** Instantiate `GithubSlugger` per file and slug every heading in document order, including the ones you filter out, or the duplicate counters drift. `config/headings.ts` does this; the ids keep their accents.
 - **Durations reference tokens with v4's custom-property syntax** — `duration-(--duration-fast)`. There is no `--duration-*` utility namespace, but `--ease-*` and `--blur-*` do generate utilities.
 - **`position: sticky` inside `position: absolute`** needs `inset-y-0` on the absolute box to have a height to stick within, and the sticky child must be shorter than the viewport or it stops sticking partway down.
+- **The `animation` shorthand resets `animation-delay` to `0s`.** The `--animate-*` tokens are shorthands, so a rule that sets one after a shared `animation-delay` rule silently zeroes every stagger. Declare the delay last.
 - **An inline element loses its `::after` at a line break.** A per-character overlay silently vanishes on whichever glyph ends a line; put the overlay on an `inline-block` wrapper (a word) instead, which also keeps a repeating background continuous across the letters.
 - **`line-clamp-*` needs an unpadded box.** Its `display: -webkit-box` loses to any later `display` utility, and vertical padding lets the next line peek through under the clamp.
 - **The icon sprite ships its own palette.** Its fills and strokes are `currentColor` so the footer can tint them with the ink tokens.
