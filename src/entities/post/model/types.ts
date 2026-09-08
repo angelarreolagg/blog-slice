@@ -4,6 +4,10 @@ import type { MDXProps } from "mdx/types";
 // `AnimatedTitle`; posts that name none get the plain title.
 export type TitleStyle = "plain" | "matrix" | "valo";
 
+// Whether the `matrix` entrance leaves its dot grid over the type or sweeps
+// plain text; the motion is the same either way.
+export type TitleTexture = "dots" | "plain";
+
 // Tones an entry may set for an entrance that takes them; each one that is
 // left out falls through to the palette default.
 export type TitleTones = {
@@ -26,6 +30,7 @@ export type PostFrontmatter = {
   author?: string;
   titleStyle?: TitleStyle;
   titleTones?: TitleTones;
+  titleTexture?: TitleTexture;
   tags?: Array<string>;
   draft?: boolean;
 };
@@ -45,6 +50,7 @@ export type PostSummary = {
   author?: string;
   titleStyle: TitleStyle;
   titleTones?: TitleTones;
+  titleTexture: TitleTexture;
   tags: Array<string>;
   readingMinutes: number;
 };

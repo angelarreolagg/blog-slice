@@ -1,5 +1,5 @@
 import { cn } from "@/shared/lib/utils";
-import type { TitleStyle, TitleTones } from "@/entities/post";
+import type { TitleStyle, TitleTexture, TitleTones } from "@/entities/post";
 import { MatrixTitle } from "./matrix-title";
 import { ValoTitle } from "./valo-title";
 
@@ -7,6 +7,7 @@ type AnimatedTitleProps = {
   title: string;
   style: TitleStyle;
   tones?: TitleTones;
+  texture?: TitleTexture;
   className?: string;
 };
 
@@ -14,6 +15,7 @@ export function AnimatedTitle({
   title,
   style,
   tones,
+  texture = "dots",
   className,
 }: AnimatedTitleProps) {
   if (style === "plain") {
@@ -24,7 +26,7 @@ export function AnimatedTitle({
     // The entrance carries its own motion, so the header's chunk is off.
     <h1 className={cn("animate-none", className)}>
       {style === "matrix" ? (
-        <MatrixTitle title={title} />
+        <MatrixTitle title={title} texture={texture} />
       ) : (
         <ValoTitle title={title} tones={tones} />
       )}

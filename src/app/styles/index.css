@@ -258,57 +258,73 @@
 
   --animate-matrix-char: matrix-char 220ms var(--ease-out-quart) both;
   --animate-matrix-grid: matrix-grid 220ms var(--ease-out-quart) both;
-  --animate-valo-block: valo-block calc(var(--duration-very-slow) * 1.6)
+  --animate-valo-block: valo-block calc(var(--duration-very-slow) * 2)
     var(--ease-smooth-out) both;
-  --animate-valo-strip: valo-strip calc(var(--duration-very-slow) * 1.6)
+  --animate-valo-strip: valo-strip calc(var(--duration-very-slow) * 2)
     var(--ease-smooth-out) both;
-  --animate-valo-text: valo-text calc(var(--duration-very-slow) * 1.6)
+  --animate-valo-text: valo-text calc(var(--duration-very-slow) * 2)
     var(--ease-in-out) both;
-  --animate-valo-glitch: valo-glitch calc(var(--duration-very-slow) * 1.6)
+  --animate-valo-glitch: valo-glitch calc(var(--duration-very-slow) * 2)
     var(--ease-smooth-out) both;
 
-  /* The cell is pure light while it is lit, and the glyph is written by it as
-     it leaves, keeping the light's own colour. Element opacity cannot express
-     that — it would fade the block and the glyph together — so each of the
-     three layers carries its own colour, and the halo is declared at every
-     stop so an unswept glyph holds a fully transparent shadow rather than
-     interpolating one out of nothing. */
+  /* The cell is pure light while it is lit — a short block that flickers and
+     throws a glow of its own — and the glyph is written by it as it leaves,
+     keeping the light's colour. Element opacity cannot express that: it would
+     fade the block and the glyph together, so each layer carries its own
+     colour, and both shadows are declared at every stop so an unswept glyph
+     holds fully transparent ones rather than interpolating them out of
+     nothing. */
   @keyframes matrix-char {
     0% {
       color: transparent;
       background-color: transparent;
+      box-shadow: 0 0 0.4em transparent;
       text-shadow:
         0 0 0.08em transparent,
         0 0 0.34em transparent;
-      filter: blur(0.18em);
+      filter: blur(0.12em);
     }
-    14% {
+    6% {
       color: transparent;
       background-color: var(--color-scan-hot);
+      box-shadow: 0 0 0.4em var(--color-scan-hot);
       text-shadow:
         0 0 0.08em transparent,
         0 0 0.34em transparent;
-      filter: blur(0.09em);
+      filter: blur(0.02em);
     }
-    46% {
+    16% {
       color: transparent;
       background-color: var(--color-scan);
+      box-shadow: 0 0 0.2em var(--color-scan);
       text-shadow:
         0 0 0.08em transparent,
         0 0 0.34em transparent;
-      filter: blur(0.05em);
+      filter: blur(0.02em);
     }
-    78% {
-      color: var(--color-scan-settled);
-      background-color: transparent;
+    26% {
+      color: transparent;
+      background-color: var(--color-scan-hot);
+      box-shadow: 0 0 0.4em var(--color-scan-hot);
       text-shadow:
-        0 0 0.08em var(--color-scan-glow),
-        0 0 0.34em var(--color-scan-glow);
+        0 0 0.08em transparent,
+        0 0 0.34em transparent;
+      filter: blur(0.02em);
+    }
+    36% {
+      color: transparent;
+      background-color: transparent;
+      box-shadow: 0 0 0.4em transparent;
+      text-shadow:
+        0 0 0.08em transparent,
+        0 0 0.34em transparent;
       filter: blur(0);
     }
+    62%,
     100% {
       color: var(--color-scan-settled);
       background-color: transparent;
+      box-shadow: 0 0 0.4em transparent;
       text-shadow:
         0 0 0.08em var(--color-scan-glow),
         0 0 0.34em var(--color-scan-glow);
@@ -341,9 +357,12 @@
     0% {
       clip-path: inset(0 100% 0 0);
     }
-    25%,
-    35% {
+    20%,
+    28% {
       clip-path: inset(0 50% 0 0);
+      /* The --ease-in-out token, written out: a keyframe's own timing
+         function cannot read a custom property in Chromium. */
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
     100% {
       clip-path: inset(0 100% 0 0);
@@ -352,36 +371,44 @@
 
   @keyframes valo-strip {
     0%,
-    25% {
+    20% {
       clip-path: inset(0 calc(100% - var(--valo-strip)) 0 0);
     }
-    35% {
+    28% {
       clip-path: inset(0 50% 0 calc(50% - var(--valo-strip)));
+      /* The --ease-in-out token, written out: a keyframe's own timing
+         function cannot read a custom property in Chromium. */
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
     100% {
       clip-path: inset(0 0 0 100%);
     }
   }
 
-  /* The text turns on under the closed panels, so the switch is never seen. */
+  /* The text turns on under the closed panels, so the switch is never seen,
+     and waits there a step back; it comes up to full size as the panels open,
+     so the reveal has depth as well as width. */
   @keyframes valo-text {
     0%,
-    25% {
+    20% {
       opacity: 0;
+      scale: 0.88;
       text-shadow:
         0 0 0.06em transparent,
         0 0 0.4em transparent;
     }
-    30%,
-    40% {
+    24%,
+    28% {
       opacity: 1;
+      scale: 0.88;
       text-shadow:
         0 0 0.06em transparent,
         0 0 0.4em transparent;
     }
-    85%,
+    80%,
     100% {
       opacity: 1;
+      scale: 1;
       text-shadow:
         0 0 0.06em var(--valo-halo),
         0 0 0.4em var(--valo-halo);
@@ -393,30 +420,30 @@
      spot only while they are closed. A jump would read as a fault. */
   @keyframes valo-glitch {
     0%,
-    15% {
+    12% {
       clip-path: inset(0 100% 0 0);
       inset-inline-start: var(--gx);
       inset-block-start: var(--gy);
     }
-    19%,
-    25% {
+    15%,
+    20% {
       clip-path: inset(0);
     }
-    29% {
+    23% {
       clip-path: inset(0 0 0 100%);
       inset-inline-start: var(--gx);
       inset-block-start: var(--gy);
     }
-    30% {
+    24% {
       clip-path: inset(0 100% 0 0);
       inset-inline-start: var(--gx2);
       inset-block-start: var(--gy2);
     }
-    34%,
-    39% {
+    27%,
+    31% {
       clip-path: inset(0);
     }
-    43%,
+    34%,
     100% {
       clip-path: inset(0 0 0 100%);
       inset-inline-start: var(--gx2);
@@ -686,6 +713,11 @@
     background-size: 0.075em 0.075em;
     pointer-events: none;
   }
+  /* The same sweep over plain type: the panel keeps its grid element for the
+     clock, but paints nothing. */
+  .matrix-plain .matrix-word::after {
+    content: none;
+  }
 
   /* A match-found card over the title. The overlays are clipped in place and
      the right-hand pair is the left-hand pair mirrored, so both sides share
@@ -704,6 +736,8 @@
       transparent,
       color-mix(in oklab, var(--valo-text) 50%, transparent)
     );
+    /* Inline-block so the step back can scale; the frame still sizes to it. */
+    display: inline-block;
     color: var(--valo-text);
     animation: var(--animate-valo-text);
   }

@@ -28,6 +28,7 @@ export function PostDetailPage() {
             title={post.title}
             style={post.titleStyle}
             tones={post.titleTones}
+            texture={post.titleTexture}
             className="text-ink text-h1 mt-4 text-balance"
           />
           <p className="text-ink-muted text-lead mt-4 text-balance">

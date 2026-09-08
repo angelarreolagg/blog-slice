@@ -1,7 +1,10 @@
 import { Fragment } from "react";
+import { cn } from "@/shared/lib/utils";
+import type { TitleTexture } from "@/entities/post";
 
 type MatrixTitleProps = {
   title: string;
+  texture: TitleTexture;
 };
 
 type Glyph = {
@@ -20,7 +23,7 @@ function toWords(title: string): Array<Array<Glyph>> {
     .map((word) => [...word].map((char) => ({ char, index: index++ })));
 }
 
-export function MatrixTitle({ title }: MatrixTitleProps) {
+export function MatrixTitle({ title, texture }: MatrixTitleProps) {
   const words = toWords(title);
   const total = words.reduce((count, word) => count + word.length, 0);
 
@@ -29,7 +32,7 @@ export function MatrixTitle({ title }: MatrixTitleProps) {
       <span className="sr-only">{title}</span>
       <span
         aria-hidden
-        className="matrix-title"
+        className={cn("matrix-title", texture === "plain" && "matrix-plain")}
         style={{ "--n": total } as React.CSSProperties}
       >
         {words.map((word, wordIndex) => (

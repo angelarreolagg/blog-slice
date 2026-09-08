@@ -42,7 +42,7 @@ Git hooks are active: `pre-commit` runs lint-staged, `commit-msg` runs commitlin
 
 `reactRouter()` replaces `@vitejs/plugin-react` in `vite.config.ts` — running both double-transforms JSX and breaks Fast Refresh. `@vitejs/plugin-react` stays installed because `vitest.config.ts` uses it; tests do not run the framework plugin.
 
-**Content model.** Frontmatter is the single source of truth (`title`, `description`, `date`, optional `updated`, `tags`, `draft`, `titleStyle`, `titleTones`). The slug is always the filename, so the URL and the file can never disagree. `config/posts.ts` reads the directory with `gray-matter` and is the one source for both the prerender paths and the `virtual:published-posts` module the registry imports, which is how a draft stays out of the build output entirely.
+**Content model.** Frontmatter is the single source of truth (`title`, `description`, `date`, optional `updated`, `tags`, `draft`, `titleStyle`, `titleTones`, `titleTexture`). The slug is always the filename, so the URL and the file can never disagree. `config/posts.ts` reads the directory with `gray-matter` and is the one source for both the prerender paths and the `virtual:published-posts` module the registry imports, which is how a draft stays out of the build output entirely.
 
 **Build-time code lives in `config/`.** `vite.config.ts` and `react-router.config.ts` stay thin; the MDX plugin, the four-token highlight theme, post discovery and the feed writers live beside them in `config/`, covered by `tsconfig.node.json`.
 
@@ -71,6 +71,7 @@ These cost time when rediscovered:
 - **A table-of-contents slugger must match `rehype-slug`.** Instantiate `GithubSlugger` per file and slug every heading in document order, including the ones you filter out, or the duplicate counters drift. `config/headings.ts` does this; the ids keep their accents.
 - **Durations reference tokens with v4's custom-property syntax** — `duration-(--duration-fast)`. There is no `--duration-*` utility namespace, but `--ease-*` and `--blur-*` do generate utilities.
 - **`position: sticky` inside `position: absolute`** needs `inset-y-0` on the absolute box to have a height to stick within, and the sticky child must be shorter than the viewport or it stops sticking partway down.
+- **A keyframe's own `animation-timing-function` cannot be a `var()`.** Chromium parses it with the rule and silently keeps the shorthand's curve, so a per-segment easing has to be written out — note which token it is.
 - **The `animation` shorthand resets `animation-delay` to `0s`.** The `--animate-*` tokens are shorthands, so a rule that sets one after a shared `animation-delay` rule silently zeroes every stagger. Declare the delay last.
 - **An inline element loses its `::after` at a line break.** A per-character overlay silently vanishes on whichever glyph ends a line; put the overlay on an `inline-block` wrapper (a word) instead, which also keeps a repeating background continuous across the letters.
 - **`line-clamp-*` needs an unpadded box.** Its `display: -webkit-box` loses to any later `display` utility, and vertical padding lets the next line peek through under the clamp.

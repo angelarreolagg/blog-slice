@@ -31,6 +31,23 @@ describe("AnimatedTitle", () => {
     expect(container.querySelectorAll(".matrix-char")).toHaveLength(11);
   });
 
+  it("keeps the dot grid unless the entry asks for plain type", () => {
+    const dots = render(<AnimatedTitle title={TITLE} style="matrix" />);
+    expect(dots.container.querySelector(".matrix-plain")).toBeNull();
+    dots.unmount();
+
+    const plain = render(
+      <AnimatedTitle title={TITLE} style="matrix" texture="plain" />,
+    );
+    expect(plain.container.querySelector(".matrix-title")).toHaveClass(
+      "matrix-plain",
+    );
+    // The sweep itself is unchanged: still one glyph per character.
+    expect(plain.container.querySelectorAll(".matrix-char")).toHaveLength(
+      TITLE.replaceAll(" ", "").length,
+    );
+  });
+
   it("keeps the valo title as one text node under decorative overlays", () => {
     render(<AnimatedTitle title={TITLE} style="valo" />);
     const heading = screen.getByRole("heading", { level: 1, name: TITLE });

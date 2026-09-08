@@ -769,20 +769,24 @@ The entrance is a **terminal cursor**: a glowing block runs through the glyphs i
 reading order, wrapping lines as it goes, and each character is written as it
 passes. Nothing has been typed ahead of it.
 
-| Beat            | What happens                                                                                                |
-| --------------- | ----------------------------------------------------------------------------------------------------------- |
-| 0 → 80ms        | the first cell lights at the top left                                                                       |
-| 80 → 780ms      | the block runs the whole title, ~12–15 cells lit at once — a bright head with a cooling trail               |
-| per cell, 220ms | the cell lights `scan-hot` with nothing in it, cools to `scan`, then clears as its glyph fades up behind it |
-| → 1.0s          | the last cell clears; the title is left in the light's own colour, haloed                                   |
+| Beat            | What happens                                                                                                     |
+| --------------- | ---------------------------------------------------------------------------------------------------------------- |
+| 0 → 80ms        | the first cell lights at the top left                                                                            |
+| 80 → 780ms      | the block runs the whole title, ~6 cells lit at once — a short block that glows and flickers as it goes          |
+| per cell, 220ms | the cell lights `scan-hot` with nothing in it, dips to `scan` and back, clears, and its glyph fades up behind it |
+| → 1.0s          | the last cell clears; the title is left in the light's own colour, haloed                                        |
 
 The block is the character's own `background-color`, so it is a real terminal
 cell: it hugs the glyph, needs no extra element, and follows the text across line
 breaks for free. Its tones are given, not derived: the head is `#cdffff` and the
 halo `#247fdd`, both stored as OKLCH in the palette and both round-tripping to
-their exact hex. The trail between them stays at **1.5× the reference HUD bar's
-luminance** (`oklch(0.783 0.105 255)`), which is what makes the head read as a
-hot core rather than a flat fill. The scan window is `--duration-very-slow × 1.4`; it is a
+their exact hex. `scan` (`oklch(0.783 0.105 255)`, 1.5× the reference HUD bar's
+luminance) is no longer a trail but the dip of the flicker: each cell goes hot,
+dims to it for a beat, and goes hot again before it clears, which is what makes
+the block read as a live light rather than a fill. The lit cell also throws a
+`box-shadow` in its own tone, so the block glows past its edges — declared at
+every stop, transparent when unlit, for the same reason as the text halo. The
+scan window is `--duration-very-slow × 1.4`; it is a
 one-shot entrance whose length is set by how fast text can be read appearing, not
 by the interaction scale in §6.
 
@@ -831,6 +835,9 @@ Rules:
   legible through it.
 - Under reduced motion every glyph is present immediately and the dot texture
   stays — the pixelation is the style, not the motion.
+- **The grid is optional, the sweep is not.** `titleTexture: plain` in the
+  frontmatter keeps the whole entrance and drops the dots — the grid element
+  stays for the clock and paints nothing. The default is `dots`.
 
 **`valo`** quotes a game's match-found card. Two panels grow in from the title's
 edges, close over it, and pull back to uncover it; while they are closed, boxes
@@ -842,8 +849,9 @@ soft halo, the second place after `matrix` where a heading is not `ink`.
 | 0 → 200ms   | the panels grow in from the edges, each with its strip on its outer edge, and close over the title |
 | 120 → 380ms | boxes of static wipe in, hold and wipe out over the panels, twice each, crossing the card between  |
 | 200 → 280ms | the strips dart to the seam; the title turns on underneath, unseen                                 |
-| 280 → 800ms | the panels pull back toward the edges they came from and the title emerges from the centre outward |
-| 640 → 800ms | the last slivers thin to nothing at the edges, the strips with them; the halo settles              |
+| 280 → 1.0s  | the panels ease back toward the edges they came from and the title emerges from the centre outward |
+| 280 → 800ms | the title comes up from 0.88 to full size as it is uncovered, arriving from a step back            |
+| 800ms → 1s  | the last slivers thin to nothing at the edges, the strips with them; the halo settles              |
 
 The card quotes the mechanics; the tones are the entry's. `titleTones` in the
 frontmatter may name `primary` (the panels), `secondary` (the strips and the
@@ -890,9 +898,13 @@ Rules:
   accessible name is the title with nothing to duplicate.
 - The title turns on only once the panels have closed over it, so no glyph is
   seen ahead of the card, and the halo arrives with the reveal.
+- **The title arrives from behind.** It sits at `0.88` under the closed panels
+  and scales to `1` as they open, on the same `ease-in-out` as the retract, so
+  the reveal has depth as well as width. The panels' approach keeps the fast
+  `smooth-out`; only what follows the seam is slow and symmetric.
 - Under reduced motion the card is skipped and the title is simply present in
   its settled colour.
-- The clock is `--duration-very-slow × 1.6`; like `matrix`, a one-shot entrance
+- The clock is `--duration-very-slow × 2`; like `matrix`, a one-shot entrance
   timed to the reveal rather than to the interaction scale in §6.
 
 ---
